@@ -6,9 +6,12 @@ import App from './App.jsx'
 
 import { RouterProvider } from "react-router/dom";
 import { router } from './routes/router.jsx';
+import ThemeProvider from './contexts/ThemeContext/ThemeContext.jsx';
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router = {router}/>
+    <ThemeProvider>
+      <RouterProvider router={router} />
+    </ThemeProvider>
   </StrictMode>,
-)
+);
