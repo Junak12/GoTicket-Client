@@ -6,6 +6,7 @@ import About from "../pages/About/About";
 import AuthLayout from "../layouts/AuthLayout";
 import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
+import PrivateRoute from "./PrivateRoute";
 
 export const router = createBrowserRouter([
   {
@@ -18,7 +19,9 @@ export const router = createBrowserRouter([
       },
       {
         path: "alltickets",
-        Component: AllTickets,
+        element:<PrivateRoute>
+          <AllTickets></AllTickets>
+        </PrivateRoute>
       },
       {
         path: "about",
