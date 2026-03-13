@@ -9,6 +9,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   onAuthStateChanged,
+  updateProfile,
 } from "firebase/auth";
 import app from "../../Firrbase/firebase.init";
 
@@ -22,9 +23,13 @@ const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   // signup
-  const createUser = (email, password) => {
+  const createUser = async(name, email, password) => {
     setLoading(true);
-    return createUserWithEmailAndPassword(auth, email, password);
+    const result = await createUserWithEmailAndPassword(auth, email, password);
+    await updateProfile(result.user, {
+      displayName: name,
+    });
+    return result;
   };
 
   // login
