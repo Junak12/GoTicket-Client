@@ -16,8 +16,8 @@ const Navbar = () => {
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "All Tickets", path: "/alltickets", private: true },
-    {name:"Coverage Area", path:"/coveragearea"},
-    {name: "About Us", path:'/about'},
+    { name: "Coverage Area", path: "/coveragearea" },
+    { name: "Join As Partner", path: "/vendor" },
     { name: "Dashboard", path: "/dashboard", private: true },
   ];
 
@@ -92,10 +92,12 @@ const Navbar = () => {
             {/* Dropdown */}
             {dropdownOpen && (
               <div className="absolute right-0 mt-3 w-44 bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                {/* User Name */}
                 <p className="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-white border-b">
                   {user?.displayName || "User"}
                 </p>
 
+                {/* My Profile */}
                 <Link
                   to="/profile"
                   className="block px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -103,6 +105,15 @@ const Navbar = () => {
                   My Profile
                 </Link>
 
+                {/* My Tickets */}
+                <Link
+                  to="/mytickets"
+                  className="block px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  My Tickets
+                </Link>
+
+                {/* Logout */}
                 <button
                   onClick={handleLogout}
                   className="w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100 dark:hover:bg-gray-700"

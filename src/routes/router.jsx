@@ -2,11 +2,11 @@ import { createBrowserRouter } from "react-router";
 import Home from "../pages/Home/Home";
 import RootLayout from "../layouts/RootLayout";
 import AllTickets from "../pages/AllTickets/AllTickets";
-import About from "../pages/About/About";
 import AuthLayout from "../layouts/AuthLayout";
 import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
 import PrivateRoute from "./PrivateRoute";
+import CoverageArea from "../pages/CoverageArea/CoverageArea";
 
 export const router = createBrowserRouter([
   {
@@ -19,13 +19,15 @@ export const router = createBrowserRouter([
       },
       {
         path: "alltickets",
-        element:<PrivateRoute>
-          <AllTickets></AllTickets>
-        </PrivateRoute>
+        element: (
+          <PrivateRoute>
+            <AllTickets></AllTickets>
+          </PrivateRoute>
+        ),
       },
       {
-        path: "about",
-        Component: About,
+        path: "coveragearea",
+        Component:CoverageArea,
       },
     ],
   },
@@ -39,7 +41,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "register",
-        Component:Register
+        Component: Register,
       },
     ],
   },
