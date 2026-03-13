@@ -1,8 +1,10 @@
 import { motion } from "framer-motion";
 import { FaBus, FaTrain, FaPlane, FaShip } from "react-icons/fa";
 import Heroimg from "../../assets/HeroImage.png";
+import { useNavigate } from "react-router";
 
 const Hero = () => {
+  const navigate = useNavigate();
   return (
     <section className="relative overflow-hidden bg-gradient-to-r from-indigo-50 via-white to-blue-50 py-20 px-6 md:px-16">
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
@@ -36,6 +38,7 @@ const Hero = () => {
           <motion.button
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.95 }}
+            onClick={() => navigate('alltickets')}
             className="mt-8 bg-[#ACD487] text-gray-900 font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition"
           >
             Explore Tickets

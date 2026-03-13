@@ -4,7 +4,7 @@ import Partners from '../../components/Partners/Partners'
 
 const Home = () => {
   return (
-    <div className="mt-4">
+    <div className="mt-18">
       <Hero />
       <div className='mt-8'>
         <Partners />

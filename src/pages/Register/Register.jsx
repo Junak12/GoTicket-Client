@@ -3,11 +3,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LuUser, LuMail, LuLock } from "react-icons/lu";
 import { FcGoogle } from "react-icons/fc";
-import { Link } from "react-router"; // fixed import
+import { Link, useNavigate } from "react-router";
 import { z } from "zod";
-import registerLogo from "../../assets/loginLogo.jpg"; // reuse loginLogo
+import registerLogo from "../../assets/loginLogo.jpg";
+import { useAuth } from "../../hooks/Auth/useAuth";
 
-// Zod schema for register
+
+// Zod schema
 const registerSchema = z
   .object({
     name: z.string().min(2, { message: "Name must be at least 2 characters" }),
@@ -25,21 +27,42 @@ const registerSchema = z
   });
 
 const Register = () => {
+  const { createUser, googleLogin } = useAuth();
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(registerSchema),
-    mode: "onTouched", // show errors on blur/touch
+    mode: "onTouched",
   });
 
   const onSubmit = (data) => {
-    console.log("Register Data:", data);
+    createUser(data.email, data.password)
+      .then((result) => {
+        console.log(result.user);
+        navigate("/");
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
+  };
+
+  const handleGoogleRegister = () => {
+    googleLogin()
+      .then((result) => {
+        console.log(result.user);
+        navigate("/");
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
   };
 
   return (
-    <div className=" mt-10  flex items-center justify-center bg-[#ACD487]/20 py-10 px-4 rounded-4xl">
+    <div className="mt-10 flex items-center justify-center bg-[#ACD487]/20 py-10 px-4 rounded-4xl">
       <div className="max-w-5xl flex overflow-hidden rounded-xl shadow-xl bg-white dark:bg-[#ACD487] transition">
         {/* LEFT IMAGE */}
         <div className="w-1/2 hidden md:block">
@@ -57,7 +80,6 @@ const Register = () => {
               Create Account
             </h1>
 
-            {/* disable native validation */}
             <form
               noValidate
               onSubmit={handleSubmit(onSubmit)}
@@ -70,7 +92,7 @@ const Register = () => {
                   type="text"
                   placeholder="Name"
                   {...register("name")}
-                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-black/30 bg-transparent text-gray-900 dark:text-black placeholder-gray-400 dark:placeholder-black/60 focus:outline-none focus:ring-2 focus:ring-[#ACD487] focus:border-transparent transition"
+                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-black/30 bg-transparent"
                 />
                 {errors.name && (
                   <p className="text-red-500 text-sm mt-1">
@@ -86,7 +108,7 @@ const Register = () => {
                   type="email"
                   placeholder="Email"
                   {...register("email")}
-                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-black/30 bg-transparent text-gray-900 dark:text-black placeholder-gray-400 dark:placeholder-black/60 focus:outline-none focus:ring-2 focus:ring-[#ACD487] focus:border-transparent transition"
+                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-black/30 bg-transparent"
                 />
                 {errors.email && (
                   <p className="text-red-500 text-sm mt-1">
@@ -102,7 +124,7 @@ const Register = () => {
                   type="password"
                   placeholder="Password"
                   {...register("password")}
-                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-black/30 bg-transparent text-gray-900 dark:text-black placeholder-gray-400 dark:placeholder-black/60 focus:outline-none focus:ring-2 focus:ring-[#ACD487] focus:border-transparent transition"
+                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-black/30 bg-transparent"
                 />
                 {errors.password && (
                   <p className="text-red-500 text-sm mt-1">
@@ -118,7 +140,7 @@ const Register = () => {
                   type="password"
                   placeholder="Confirm Password"
                   {...register("confirmPassword")}
-                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-black/30 bg-transparent text-gray-900 dark:text-black placeholder-gray-400 dark:placeholder-black/60 focus:outline-none focus:ring-2 focus:ring-[#ACD487] focus:border-transparent transition"
+                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-black/30 bg-transparent"
                 />
                 {errors.confirmPassword && (
                   <p className="text-red-500 text-sm mt-1">
@@ -129,7 +151,7 @@ const Register = () => {
 
               <button
                 type="submit"
-                className="w-full py-3 rounded-lg bg-[#ACD487] hover:bg-[#9BCB75] text-gray-900 font-semibold transition duration-200"
+                className="w-full py-3 rounded-lg bg-[#ACD487] hover:bg-[#9BCB75] text-gray-900 font-semibold"
               >
                 Register
               </button>
@@ -144,8 +166,11 @@ const Register = () => {
               <div className="flex-1 h-px bg-gray-300 dark:bg-black/30"></div>
             </div>
 
-            {/* Google */}
-            <button className="w-full flex items-center justify-center gap-3 py-3 rounded-lg border border-gray-300 dark:border-black/30 hover:bg-gray-100 dark:hover:bg-[#9BCB75] transition duration-200">
+            {/* Google Register */}
+            <button
+              onClick={handleGoogleRegister}
+              className="w-full flex items-center justify-center gap-3 py-3 rounded-lg border border-gray-300 dark:border-black/30 hover:bg-gray-100 dark:hover:bg-[#9BCB75]"
+            >
               <FcGoogle size={20} />
               <span className="text-gray-800 dark:text-black font-medium">
                 Continue with Google

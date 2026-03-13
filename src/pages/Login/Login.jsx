@@ -3,9 +3,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LuMail, LuLock } from "react-icons/lu";
 import { FcGoogle } from "react-icons/fc";
-import { Link } from "react-router"; 
+import { Link, useNavigate } from "react-router";
 import { z } from "zod";
 import loginLogo from "../../assets/loginLogo.jpg";
+import { useAuth } from "../../hooks/Auth/useAuth";
+
 
 // Zod validation schema
 const loginSchema = z.object({
@@ -16,17 +18,38 @@ const loginSchema = z.object({
 });
 
 const Login = () => {
+  const { signInUser, googleLogin } = useAuth();
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(loginSchema),
-    mode: "onTouched", // validates on blur/touch
+    mode: "onTouched",
   });
 
   const onSubmit = (data) => {
-    console.log("Login Data:", data);
+    signInUser(data.email, data.password)
+      .then((result) => {
+        console.log(result.user);
+        navigate("/");
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
+  };
+
+  const handleGoogleLogin = () => {
+    googleLogin()
+      .then((result) => {
+        console.log(result.user);
+        navigate("/");
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
   };
 
   return (
@@ -60,7 +83,7 @@ const Login = () => {
                   type="email"
                   placeholder="Email"
                   {...register("email")}
-                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-black/30 bg-transparent text-gray-900 dark:text-black placeholder-gray-400 dark:placeholder-black/60 focus:outline-none focus:ring-2 focus:ring-[#ACD487] focus:border-transparent transition"
+                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-black/30 bg-transparent text-gray-900 dark:text-black placeholder-gray-400 dark:placeholder-black/60 focus:outline-none focus:ring-2 focus:ring-[#ACD487]"
                 />
                 {errors.email && (
                   <p className="text-red-500 text-sm mt-1">
@@ -76,7 +99,7 @@ const Login = () => {
                   type="password"
                   placeholder="Password"
                   {...register("password")}
-                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-black/30 bg-transparent text-gray-900 dark:text-black placeholder-gray-400 dark:placeholder-black/60 focus:outline-none focus:ring-2 focus:ring-[#ACD487] focus:border-transparent transition"
+                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-black/30 bg-transparent text-gray-900 dark:text-black placeholder-gray-400 dark:placeholder-black/60 focus:outline-none focus:ring-2 focus:ring-[#ACD487]"
                 />
                 {errors.password && (
                   <p className="text-red-500 text-sm mt-1">
@@ -87,7 +110,7 @@ const Login = () => {
 
               <button
                 type="submit"
-                className="w-full py-3 rounded-lg bg-[#ACD487] hover:bg-[#9BCB75] text-gray-900 font-semibold transition duration-200"
+                className="w-full py-3 rounded-lg bg-[#ACD487] hover:bg-[#9BCB75] text-gray-900 font-semibold"
               >
                 Login
               </button>
@@ -102,8 +125,11 @@ const Login = () => {
               <div className="flex-1 h-px bg-gray-300 dark:bg-black/30"></div>
             </div>
 
-            {/* Google */}
-            <button className="w-full flex items-center justify-center gap-3 py-3 rounded-lg border border-gray-300 dark:border-black/30 hover:bg-gray-100 dark:hover:bg-[#9BCB75] transition duration-200">
+            {/* Google Login */}
+            <button
+              onClick={handleGoogleLogin}
+              className="w-full flex items-center justify-center gap-3 py-3 rounded-lg border border-gray-300 dark:border-black/30 hover:bg-gray-100 dark:hover:bg-[#9BCB75]"
+            >
               <FcGoogle size={20} />
               <span className="text-gray-800 dark:text-black font-medium">
                 Continue with Google
