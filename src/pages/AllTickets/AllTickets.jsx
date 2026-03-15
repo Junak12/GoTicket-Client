@@ -1,21 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import useAxios from "../../hooks/Axios/useAxios";
 import { useQuery } from "@tanstack/react-query";
-import TicketList from "../../components/TicketList/TicketList";
 import { LuRefreshCcw } from "react-icons/lu";
 import { motion } from "framer-motion";
+
+const TicketList = React.lazy(
+  () => import("../../components/TicketList/TicketList"),
+);
 
 const containerVariants = {
   hidden: {},
   show: {
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.05,
     },
   },
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 40 },
+  hidden: { opacity: 0, y: 20 },
   show: { opacity: 1, y: 0 },
 };
 
@@ -25,7 +28,7 @@ const AllTickets = () => {
   const limit = 6;
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo(0, 0);
   }, [page]);
 
   const fetchTickets = async ({ queryKey }) => {
@@ -40,6 +43,7 @@ const AllTickets = () => {
     queryKey: ["tickets", page],
     queryFn: fetchTickets,
     keepPreviousData: true,
+    staleTime: 1000 * 60 * 5,
   });
 
   if (isLoading) {
@@ -60,26 +64,31 @@ const AllTickets = () => {
 
   const { tickets, totalPages } = data;
 
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1).slice(
+    Math.max(0, page - 3),
+    page + 2,
+  );
+
   return (
     <section className="py-20 px-4 md:px-12 lg:px-0">
-      {/* Header */}
+
       <motion.div
-        initial={{ opacity: 0, y: -40 }}
+        initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.4 }}
         className="flex flex-col md:flex-row items-center justify-between mb-12 gap-4"
       >
         <div className="text-center md:text-left">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-cyan-500">
             Explore All Tickets
           </h1>
-          <p className="text-gray-500 mt-2 sm:mt-3 text-base sm:text-lg">
+          <p className="text-gray-500 mt-2 text-base sm:text-lg">
             Find your perfect journey and book instantly
           </p>
         </div>
 
         <motion.button
-          whileHover={{ scale: 1.08, rotate: 3 }}
+          whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={refetch}
           className="flex items-center gap-2 px-5 py-2 rounded-lg bg-[#ACD487] text-black font-medium shadow-md"
@@ -89,21 +98,25 @@ const AllTickets = () => {
         </motion.button>
       </motion.div>
 
-      <motion.div
-        key={page}
-        variants={containerVariants}
-        initial="hidden"
-        animate="show"
-      >
-        <TicketList tickets={tickets} itemVariants={itemVariants} />
-      </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3 }}
-        className="flex flex-wrap justify-center gap-2 mt-12"
+      <Suspense
+        fallback={
+          <div className="flex justify-center py-20">
+            <span className="loading loading-spinner loading-lg text-cyan-500"></span>
+          </div>
+        }
       >
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+        >
+          <TicketList tickets={tickets} itemVariants={itemVariants} />
+        </motion.div>
+      </Suspense>
+
+ 
+      <div className="flex flex-wrap justify-center gap-2 mt-12">
         <button
           disabled={page === 1}
           onClick={() => setPage((prev) => prev - 1)}
@@ -112,17 +125,17 @@ const AllTickets = () => {
           Prev
         </button>
 
-        {[...Array(totalPages)].map((_, idx) => (
+        {pageNumbers.map((num) => (
           <motion.button
-            key={idx}
+            key={num}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            onClick={() => setPage(idx + 1)}
+            onClick={() => setPage(num)}
             className={`px-4 py-1 rounded ${
-              page === idx + 1 ? "bg-cyan-500 text-white" : "bg-[#ACD487]"
+              page === num ? "bg-cyan-500 text-white" : "bg-[#ACD487]"
             }`}
           >
-            {idx + 1}
+            {num}
           </motion.button>
         ))}
 
@@ -133,7 +146,7 @@ const AllTickets = () => {
         >
           Next
         </button>
-      </motion.div>
+      </div>
     </section>
   );
 };
