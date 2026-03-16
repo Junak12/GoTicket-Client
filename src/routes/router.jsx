@@ -7,6 +7,8 @@ import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
 import PrivateRoute from "./PrivateRoute";
 import CoverageArea from "../pages/CoverageArea/CoverageArea";
+import BookTicket from "../pages/BookTicket/BookTicket";
+
 
 export const router = createBrowserRouter([
   {
@@ -28,6 +30,12 @@ export const router = createBrowserRouter([
       {
         path: "coveragearea",
         Component:CoverageArea,
+      },
+      {
+        path:"booktickets",
+        element:<PrivateRoute>
+          <BookTicket/>
+        </PrivateRoute>
       },
     ],
   },

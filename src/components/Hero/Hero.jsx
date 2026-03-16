@@ -36,12 +36,11 @@ const Hero = () => {
           <motion.button
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => navigate('alltickets')}
+            onClick={() => navigate("booktickets")}
             className=" cursor-pointer mt-8 bg-[#ACD487] text-gray-900 font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition"
           >
             Book Tickets
           </motion.button>
-
 
           <div className="flex items-center gap-6 mt-10 text-[#ACD487] text-3xl">
             <FaBus />
@@ -50,7 +49,6 @@ const Hero = () => {
             <FaShip />
           </div>
         </motion.div>
-
 
         <motion.div
           initial={{ opacity: 0, y: 60 }}
@@ -71,7 +69,6 @@ const Hero = () => {
           />
         </motion.div>
       </div>
-
 
       <motion.div
         initial={{ opacity: 0, y: 80 }}
@@ -96,7 +93,6 @@ const Hero = () => {
           <option>Bus</option>
           <option>Train</option>
           <option>Plane</option>
-          <option>Launch</option>
         </select>
 
         <input
