@@ -8,6 +8,9 @@ import Register from "../pages/Register/Register";
 import PrivateRoute from "./PrivateRoute";
 import CoverageArea from "../pages/CoverageArea/CoverageArea";
 import BookTicket from "../pages/BookTicket/BookTicket";
+import TicketDetails from "../components/TicketDetails/TicketDetails";
+import PaymentSuccess from "../pages/Payment/PaymentSuccess";
+import PaymentCancel from "../pages/Payment/PaymentCancel";
 
 
 export const router = createBrowserRouter([
@@ -29,13 +32,23 @@ export const router = createBrowserRouter([
       },
       {
         path: "coveragearea",
-        Component:CoverageArea,
+        Component: CoverageArea,
       },
       {
-        path:"booktickets",
-        element:<PrivateRoute>
-          <BookTicket/>
-        </PrivateRoute>
+        path: "booktickets",
+        element: (
+          <PrivateRoute>
+            <BookTicket />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/tickets/:id",
+        element: (
+          <PrivateRoute>
+            <TicketDetails />
+          </PrivateRoute>
+        ),
       },
     ],
   },
@@ -50,6 +63,20 @@ export const router = createBrowserRouter([
       {
         path: "register",
         Component: Register,
+      },
+      {
+        path: "payment-success",
+        element: (
+          <PrivateRoute>
+            <PaymentSuccess />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "payment-cancelled",
+        element:<PrivateRoute>
+          <PaymentCancel/>
+        </PrivateRoute>
       },
     ],
   },

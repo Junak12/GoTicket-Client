@@ -63,7 +63,7 @@ const TicketList = ({ tickets }) => {
                 whileTap={{ scale: 0.95 }}
                 whileHover={{ scale: 1.05 }}
                 onClick={() => navigate(`/tickets/${ticket._id}`)}
-                className="w-full sm:w-auto px-4 py-2 text-sm sm:text-base rounded-lg text-black font-semibold bg-[#ACD487] shadow hover:opacity-90 transition"
+                className="w-full cursor-pointer sm:w-auto px-4 py-2 text-sm sm:text-base rounded-lg text-black font-semibold bg-[#ACD487] shadow hover:opacity-90 transition"
               >
                 Book Now
               </motion.button>
