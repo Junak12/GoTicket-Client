@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import useAxios from "../../hooks/Axios/useAxios";
 import { useAuth } from "../../hooks/Auth/useAuth";
@@ -13,6 +13,7 @@ const BookingModal = ({ ticket, closeModal, departurePassed }) => {
 
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [selectedPerks, setSelectedPerks] = useState([]);
+
 
   const getLayout = (type) => {
     switch (type.toLowerCase()) {

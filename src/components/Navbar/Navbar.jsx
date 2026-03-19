@@ -4,6 +4,7 @@ import { Link, NavLink, useNavigate } from "react-router";
 import useTheme from "../../hooks/Theme/useTheme";
 import { useAuth } from "../../hooks/Auth/useAuth";
 import userImage from "../../assets/userImage.png";
+import { useRole } from "../../hooks/Role/useRole";
 
 const Navbar = () => {
   const { toggleTheme } = useTheme();

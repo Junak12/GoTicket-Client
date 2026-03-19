@@ -9,17 +9,20 @@ import { router } from "./routes/router.jsx";
 import ThemeProvider from "./contexts/ThemeContext/ThemeContext.jsx";
 import AuthProvider from "./contexts/AuthContext/AuthContext.jsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { RoleProvider } from "./contexts/RoleContext/RoleContext.jsx";
 
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <ThemeProvider>
-          <RouterProvider router={router} />
-        </ThemeProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+    <RoleProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <ThemeProvider>
+            <RouterProvider router={router} />
+          </ThemeProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </RoleProvider>
   </StrictMode>,
 );
