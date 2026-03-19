@@ -1,10 +1,15 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Hero from '../../components/Hero/Hero'
 import Partners from '../../components/Partners/Partners'
 import PopularRoutes from '../../components/PopularRoutes/PopularRoutes';
 import WhyChoose from '../../components/WhyChoose/WhyChoose';
 
 const Home = () => {
+  
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+  }, []);
+
   return (
     <div className="mt-18">
       <Hero />

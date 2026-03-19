@@ -31,7 +31,9 @@ const registerSchema = z
 const Register = () => {
   const { createUser, googleLogin } = useAuth();
   const navigate = useNavigate();
-  const axios = useAxios();
+  const instance = useAxios();
+
+
 
   const {
     register: formRegister,
@@ -56,7 +58,7 @@ const Register = () => {
         createdAt: new Date(),
       };
 
-      await axios.post("/user", userInfo);
+      await instance.post("/user", userInfo);
 
       Swal.fire({
         icon: "success",

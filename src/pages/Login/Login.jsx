@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LuMail, LuLock } from "react-icons/lu";
@@ -9,7 +9,6 @@ import loginLogo from "../../assets/loginLogo.jpg";
 import { useAuth } from "../../hooks/Auth/useAuth";
 
 
-// Zod validation schema
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
   password: z
@@ -20,6 +19,10 @@ const loginSchema = z.object({
 const Login = () => {
   const { signInUser, googleLogin } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+  }, []);
 
   const {
     register,
