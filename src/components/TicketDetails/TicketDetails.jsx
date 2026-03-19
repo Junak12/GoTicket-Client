@@ -107,7 +107,16 @@ const handlePayment = async () => {
     const res = await instance.post("/create-checkout-session", {
       totalPrice,
       email: user?.email,
-      vendorName:ticket.title,
+      vendorName: ticket.title,
+      ticketId: ticket._id,
+      seats: selectedSeats,
+    });
+    console.log({
+      totalPrice,
+      email: user?.email,
+      vendorName: ticket.title,
+      ticketId: ticket._id,
+      seats: selectedSeats,
     });
 
     window.location.href = res.data.url;
