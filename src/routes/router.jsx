@@ -17,28 +17,21 @@ import Profile from "../pages/DashBoard/User/Profile";
 import MyBookings from "../pages/DashBoard/User/MyBookings";
 import Transactions from "../pages/DashBoard/User/Transactions";
 
-
 export const router = createBrowserRouter([
   {
     path: "/",
-    Component: RootLayout,
+    element: <RootLayout />,
     children: [
-      {
-        index: true,
-        Component: Home,
-      },
+      { index: true, element: <Home /> },
       {
         path: "alltickets",
         element: (
           <PrivateRoute>
-            <AllTickets></AllTickets>
+            <AllTickets />
           </PrivateRoute>
         ),
       },
-      {
-        path: "coveragearea",
-        Component: CoverageArea,
-      },
+      { path: "coveragearea", element: <CoverageArea /> },
       {
         path: "booktickets",
         element: (
@@ -48,7 +41,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "/tickets/:id",
+        path: "tickets/:id",
         element: (
           <PrivateRoute>
             <TicketDetails />
@@ -59,16 +52,10 @@ export const router = createBrowserRouter([
   },
   {
     path: "/",
-    Component: AuthLayout,
+    element: <AuthLayout />,
     children: [
-      {
-        path: "login",
-        Component: Login,
-      },
-      {
-        path: "register",
-        Component: Register,
-      },
+      { path: "login", element: <Login /> },
+      { path: "register", element: <Register /> },
       {
         path: "payment-success",
         element: (
@@ -87,11 +74,12 @@ export const router = createBrowserRouter([
       },
     ],
   },
+  // Dashboard routes
   {
     path: "dashboard",
     element: (
       <PrivateRoute>
-        <DashboardLayout />{" "}
+        <DashboardLayout />
       </PrivateRoute>
     ),
     children: [
@@ -104,7 +92,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "user/bookings",
+        path: "user/my-bookings",
         element: (
           <RoleRoute allowedRoles={["user"]}>
             <MyBookings />
@@ -112,7 +100,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "user/transactions",
+        path: "user/my-transactions",
         element: (
           <RoleRoute allowedRoles={["user"]}>
             <Transactions />
