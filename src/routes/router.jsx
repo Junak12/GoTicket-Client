@@ -12,6 +12,10 @@ import TicketDetails from "../components/TicketDetails/TicketDetails";
 import PaymentSuccess from "../pages/Payment/PaymentSuccess";
 import PaymentCancel from "../pages/Payment/PaymentCancel";
 import DashboardLayout from "../layouts/DashboardLayout";
+import RoleRoute from "./RoleRoute";
+import Profile from "../pages/DashBoard/User/Profile";
+import MyBookings from "../pages/DashBoard/User/MyBookings";
+import Transactions from "../pages/DashBoard/User/Transactions";
 
 
 export const router = createBrowserRouter([
@@ -90,7 +94,31 @@ export const router = createBrowserRouter([
         <DashboardLayout />{" "}
       </PrivateRoute>
     ),
-    children:[
-    ]
+    children: [
+      {
+        path: "user/profile",
+        element: (
+          <RoleRoute allowedRoles={["user"]}>
+            <Profile />
+          </RoleRoute>
+        ),
+      },
+      {
+        path: "user/bookings",
+        element: (
+          <RoleRoute allowedRoles={["user"]}>
+            <MyBookings />
+          </RoleRoute>
+        ),
+      },
+      {
+        path: "user/transactions",
+        element: (
+          <RoleRoute allowedRoles={["user"]}>
+            <Transactions />
+          </RoleRoute>
+        ),
+      },
+    ],
   },
 ]);
