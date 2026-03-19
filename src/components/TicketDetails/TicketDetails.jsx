@@ -1,15 +1,16 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import useAxios from "../../hooks/Axios/useAxios";
 import { motion } from "framer-motion";
-import { useAuth } from "../../hooks/Auth/useAuth";
+import BookingModal from "../BookingModal/BookingModal";
 
 const TicketDetails = () => {
   const { id } = useParams();
   const instance = useAxios();
-  const [selectedSeats, setSelectedSeats] = useState([]);
-  const {user} = useAuth();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [departurePassed, setDeparturePassed] = useState(false);
 
   const {
     data: ticket,
@@ -21,113 +22,19 @@ const TicketDetails = () => {
     enabled: !!id,
   });
 
+  // check if departure passed
+  useEffect(() => {
+    if (ticket) {
+      setDeparturePassed(new Date(ticket.departureDateTime) < new Date());
+    }
+  }, [ticket]);
+
   if (isLoading) return <p className="text-center mt-20">Loading...</p>;
-  if (isError) return <p className="text-center mt-20">Error loading</p>;
-
-  const bookedSeats = ticket.bookedSeats || [];
-
-
-  const getLayout = (type) => {
-    switch (type) {
-      case "plane":
-        return {
-          columns: ["A", "B", "C", null, "D", "E", "F"],
-          rows: 10,
-          classMap: (row) => (row <= 2 ? "business" : "economy"),
-        };
-      case "train":
-        return {
-          columns: ["A", "B", "C", null, "D", "E"],
-          rows: 8,
-          classMap: () => "sleeper",
-        };
-      case "bus":
-      default:
-        return {
-          columns: ["A", "B", null, "C", "D"],
-          rows: 6,
-          classMap: () => "standard",
-        };
-    }
-  };
-
-  const layout = getLayout(ticket.transportType);
-
-
-  const generateSeats = () => {
-    const seats = [];
-    for (let row = 1; row <= layout.rows; row++) {
-      const currentRow = [];
-      layout.columns.forEach((col) => {
-        currentRow.push(col ? `${row}${col}` : null);
-      });
-      seats.push(currentRow);
-    }
-    return seats;
-  };
-
-  const seatsLayout = generateSeats();
-
-  const getSeatStyle = (seat, row) => {
-    if (bookedSeats.includes(seat)) return "bg-red-400 cursor-not-allowed";
-
-    if (selectedSeats.includes(seat))
-      return "bg-purple-600 text-white shadow-lg scale-105";
-
-    const seatClass = layout.classMap(row);
-    switch (seatClass) {
-      case "business":
-        return "bg-yellow-200 dark:bg-yellow-500/30";
-      case "economy":
-        return "bg-blue-200 dark:bg-blue-500/30";
-      case "sleeper":
-        return "bg-green-200 dark:bg-green-500/30";
-      default:
-        return "bg-gray-200 dark:bg-slate-700 dark:text-white";
-    }
-  };
-
-  const toggleSeat = (seat) => {
-    if (bookedSeats.includes(seat)) return;
-
-    setSelectedSeats((prev) =>
-      prev.includes(seat) ? prev.filter((s) => s !== seat) : [...prev, seat],
-    );
-  };
-
-  const totalPrice = selectedSeats.length * ticket.price;
-
-const handlePayment = async () => {
-  if (!selectedSeats.length) {
-    alert("Select seats first");
-    return;
-  }
-
-  try {
-    const res = await instance.post("/create-checkout-session", {
-      totalPrice,
-      email: user?.email,
-      vendorName: ticket.title,
-      ticketId: ticket._id,
-      seats: selectedSeats,
-    });
-    console.log({
-      totalPrice,
-      email: user?.email,
-      vendorName: ticket.title,
-      ticketId: ticket._id,
-      seats: selectedSeats,
-    });
-
-    window.location.href = res.data.url;
-  } catch (err) {
-    console.log(err);
-    alert("Payment failed");
-  }
-};
+  if (isError) return <p className="text-center mt-20">Error loading ticket</p>;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-18 grid lg:grid-cols-3 gap-10">
+    <div className="max-w-7xl mx-auto px-4 py-14 grid lg:grid-cols-3 gap-10">
+      {/* Main Ticket Info */}
       <div className="lg:col-span-2 space-y-6">
         <div className="relative rounded-3xl overflow-hidden shadow-xl">
           <img
@@ -140,106 +47,113 @@ const handlePayment = async () => {
             <p className="text-gray-200">
               {ticket.from} → {ticket.to}
             </p>
+            <p className="text-gray-200 mt-1">
+              Departure:{" "}
+              <Countdown departureDateTime={ticket.departureDateTime} />
+            </p>
+            <p className="text-gray-200 mt-1">Vendor: {ticket.vendorEmail}</p>
           </div>
         </div>
 
         <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-lg border dark:border-slate-700">
           <h2 className="text-xl font-semibold mb-4 dark:text-white">
-            Select Your Seat
+            Ticket Details
           </h2>
-
-          <div className="flex flex-wrap gap-3 text-xs mb-6">
-            <Legend color="bg-purple-500" label="Selected" />
-            <Legend color="bg-red-400" label="Booked" />
-          </div>
-
-          <div className="space-y-3">
-            {seatsLayout.map((row, rowIndex) => (
-              <div key={rowIndex} className="flex justify-center gap-3">
-                {row.map((seat, colIndex) =>
-                  seat ? (
-                    <motion.button
-                      key={seat}
-                      whileHover={{ scale: 1.15 }}
-                      whileTap={{ scale: 0.9 }}
-                      title={`Seat ${seat}`}
-                      onClick={() => toggleSeat(seat)}
-                      disabled={bookedSeats.includes(seat)}
-                      className={`w-11 h-11 rounded-lg text-xs font-bold transition
-                        ${getSeatStyle(seat, rowIndex + 1)}
-                      `}
-                    >
-                      {seat}
-                    </motion.button>
-                  ) : (
-                    <div key={colIndex} className="w-6" />
-                  ),
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="sticky top-24 h-fit">
-        <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-xl border dark:border-slate-700 space-y-5">
-          <h2 className="text-xl font-semibold dark:text-white">
-            Booking Summary
-          </h2>
-
-          <p className="text-sm dark:text-gray-300">
-            {ticket.from} → {ticket.to}
+          <p className="text-gray-600 dark:text-gray-300 mb-2">
+            Transport Type:{" "}
+            <span className="font-medium">{ticket.transportType}</span>
+          </p>
+          <p className="text-gray-600 dark:text-gray-300 mb-2">
+            Price per Ticket:{" "}
+            <span className="font-medium">৳ {ticket.price}</span>
+          </p>
+          <p className="text-gray-600 dark:text-gray-300 mb-4">
+            Available Quantity:{" "}
+            <span className="font-medium">{ticket.quantity}</span>
           </p>
 
-          <p className="text-sm dark:text-gray-300">Price: ৳ {ticket.price}</p>
-
-          <div>
-            <p className="text-sm font-medium mb-2 dark:text-white">Seats</p>
-            <div className="flex flex-wrap gap-2">
-              {selectedSeats.length ? (
-                selectedSeats.map((seat) => (
-                  <span
-                    key={seat}
-                    className="px-3 py-1 bg-purple-100 dark:bg-purple-500/20 text-purple-600 rounded-full text-xs"
-                  >
-                    {seat}
-                  </span>
-                ))
-              ) : (
-                <p className="text-gray-400 text-sm">No seats selected</p>
-              )}
-            </div>
-          </div>
-
-          <div className="flex justify-between text-lg font-bold dark:text-white">
-            <span>Total</span>
-            <span>৳ {totalPrice}</span>
-          </div>
-
           <button
-            onClick={handlePayment}
-            disabled={ticket.quantity === 0}
+            onClick={() => setModalOpen(true)}
+            disabled={ticket.quantity === 0 || departurePassed}
             className={`w-full py-3 rounded-xl font-semibold transition
               ${
-                ticket.quantity === 0
+                ticket.quantity === 0 || departurePassed
                   ? "bg-gray-300 cursor-not-allowed"
                   : "bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:scale-105"
               }
             `}
           >
-            {ticket.quantity === 0 ? "Sold Out" : "Proceed to Payment"}
+            {ticket.quantity === 0
+              ? "Sold Out"
+              : departurePassed
+                ? "Booking Closed"
+                : "Book Now"}
           </button>
         </div>
       </div>
+
+      {/* Summary Panel */}
+      <div className="sticky top-24 h-fit">
+        <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-xl border dark:border-slate-700 space-y-5">
+          <h2 className="text-xl font-semibold dark:text-white">Summary</h2>
+          <p className="text-gray-600 dark:text-gray-300">
+            {ticket.from} → {ticket.to}
+          </p>
+          <p className="text-gray-600 dark:text-gray-300">
+            Price: ৳ {ticket.price}
+          </p>
+          <p className="text-gray-600 dark:text-gray-300">
+            Available: {ticket.quantity} Tickets
+          </p>
+          <p className="text-gray-600 dark:text-gray-300">
+            Departure:{" "}
+            <Countdown departureDateTime={ticket.departureDateTime} />
+          </p>
+          <p className="text-gray-600 dark:text-gray-300">
+            Vendor: {ticket.vendorEmail}
+          </p>
+        </div>
+      </div>
+
+      {modalOpen && (
+        <BookingModal
+          ticket={ticket}
+          closeModal={() => setModalOpen(false)}
+          departurePassed={departurePassed}
+        />
+      )}
     </div>
   );
 };
 
-const Legend = ({ color, label }) => (
-  <span className="flex items-center gap-2 dark:text-gray-300">
-    <div className={`w-4 h-4 rounded ${color}`} />
-    {label}
-  </span>
-);
+// Countdown Component
+const Countdown = ({ departureDateTime }) => {
+  const [timeLeft, setTimeLeft] = useState("");
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = new Date();
+      const departure = new Date(departureDateTime);
+      const diff = departure - now;
+
+      if (diff <= 0) {
+        setTimeLeft("Departure passed");
+        clearInterval(interval);
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      setTimeLeft(`${days}d ${hours}h ${minutes}m ${seconds}s`);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [departureDateTime]);
+
+  return <span className="text-red-500 font-semibold">{timeLeft}</span>;
+};
 
 export default TicketDetails;

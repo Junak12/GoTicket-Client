@@ -24,7 +24,6 @@ const PaymentSuccess = () => {
       if (!res.data.success)
         throw new Error(res.data.message || "Payment failed");
 
-      // SweetAlert for success
       Swal.fire({
         title: "Payment Successful 🎉",
         text: "Your ticket has been booked successfully!",
@@ -34,7 +33,7 @@ const PaymentSuccess = () => {
 
       return res.data.booking;
     },
-    enabled: !!sessionId, // only run if sessionId exists
+    enabled: !!sessionId, 
   });
 
   if (isLoading)
