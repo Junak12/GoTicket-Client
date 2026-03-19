@@ -152,7 +152,6 @@ const Sidebar = () => {
           </div>
         )}
 
-        {/* Navigation Links */}
         <nav className="flex flex-col gap-2 px-2 flex-1 overflow-y-auto">
           {getLinks().map((link) => (
             <NavLink
@@ -171,7 +170,6 @@ const Sidebar = () => {
           ))}
         </nav>
 
-        {/* Footer */}
         {!collapsed && (
           <div className="p-4 text-xs text-gray-400 dark:text-gray-500 text-center border-t border-gray-200 dark:border-slate-700">
             © 2026 GoTicket
@@ -179,7 +177,6 @@ const Sidebar = () => {
         )}
       </div>
 
-      {/* Mobile Hamburger */}
       <button
         className="fixed bottom-4 right-4 md:hidden bg-purple-500 text-white p-3 rounded-full shadow-lg z-50"
         onClick={() => setMobileOpen(true)}
