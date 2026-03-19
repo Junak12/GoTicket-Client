@@ -11,17 +11,17 @@ import {
   FaClipboardList,
 } from "react-icons/fa";
 import useTheme from "../../hooks/Theme/useTheme";
-
+import { motion, AnimatePresence } from "framer-motion";
 
 const Sidebar = () => {
   const role = useRole();
   const navigate = useNavigate();
-  const [collapsed, setCollapsed] = useState(false); 
+  const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { theme, toggleTheme } = useTheme();
+  const { toggleTheme } = useTheme();
 
   const linkBase =
-    "flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-200 dark:hover:bg-slate-700 transition-all duration-200";
+    "flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-200 dark:hover:bg-slate-700";
 
   const activeLink = "bg-purple-500 text-white shadow-md";
 
@@ -72,39 +72,38 @@ const Sidebar = () => {
   ];
 
   const getLinks = () => {
-    switch (role) {
-      case "user":
-        return userLinks;
-      case "vendor":
-        return vendorLinks;
-      case "admin":
-        return adminLinks;
-      default:
-        return [];
-    }
+    if (role === "user") return userLinks;
+    if (role === "vendor") return vendorLinks;
+    if (role === "admin") return adminLinks;
+    return [];
   };
 
   return (
     <>
-      {/* Mobile Overlay */}
-      {mobileOpen && (
-        <div
-          className="fixed inset-0 bg-black/40 z-40 md:hidden"
-          onClick={() => setMobileOpen(false)}
-        />
-      )}
+      {/* Overlay */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.4 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black z-40 md:hidden"
+            onClick={() => setMobileOpen(false)}
+          />
+        )}
+      </AnimatePresence>
 
-      <div
-        className={`
-          fixed top-0 left-0 h-full z-50
-          bg-white dark:bg-slate-900
-          shadow-lg flex flex-col
-          transition-all duration-300
-          ${mobileOpen ? "translate-x-0 w-64" : "-translate-x-full md:translate-x-0"} 
-          ${collapsed ? "md:w-20" : "md:w-64"}
-        `}
+      {/* Sidebar */}
+      <motion.div
+        initial={{ x: -100 }}
+        animate={{
+          x: mobileOpen || window.innerWidth >= 768 ? 0 : -300,
+          width: collapsed ? 80 : 256,
+        }}
+        transition={{ type: "spring", stiffness: 120, damping: 20 }}
+        className="fixed top-0 left-0 h-full z-50 bg-white dark:bg-slate-900 shadow-lg flex flex-col"
       >
-        {/* Logo + Buttons */}
+        {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-slate-700">
           <div
             onClick={() => navigate("/")}
@@ -119,70 +118,78 @@ const Sidebar = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="p-2 rounded hover:bg-gray-200 dark:hover:bg-slate-700 transition"
+              className="p-2 rounded hover:bg-gray-200 dark:text-white dark:hover:bg-slate-700"
             >
-              <LuSunMoon className="text-gray-600 dark:text-white" size={22} />
+              <LuSunMoon size={22} />
             </button>
 
-            {/* Collapse Button for desktop */}
             <button
               onClick={() => setCollapsed(!collapsed)}
-              className="hidden md:block p-2 rounded hover:bg-gray-200 dark:hover:bg-slate-700 transition"
+              className="hidden md:block p-2 rounded hover:bg-gray-200 dark:hover:bg-slate-700"
             >
               {collapsed ? "➡️" : "⬅️"}
             </button>
 
-            {/* Mobile menu toggle */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="md:hidden p-2 rounded hover:bg-gray-200 dark:hover:bg-slate-700 transition"
+              className="md:hidden p-2 rounded hover:bg-gray-200 dark:hover:bg-slate-700"
             >
               {mobileOpen ? "✖️" : "☰"}
             </button>
           </div>
         </div>
 
-        {/* Role Label */}
-        {!collapsed && (
-          <div className="p-4 text-sm text-gray-500 dark:text-gray-400 uppercase font-semibold tracking-wide">
-            Role: <span className="capitalize">{role}</span>
-          </div>
-        )}
-
+        {/* Links */}
         <nav className="flex flex-col gap-2 px-2 flex-1 overflow-y-auto">
           {getLinks().map((link) => (
-            <NavLink
+            <motion.div
               key={link.to}
-              to={link.to}
-              className={({ isActive }) =>
-                `${linkBase} ${isActive ? activeLink : ""} ${collapsed ? "justify-center" : ""}`
-              }
-              onClick={() => setMobileOpen(false)}
-              data-tooltip-id={collapsed ? `tooltip-${link.name}` : undefined}
-              data-tooltip-content={collapsed ? link.name : undefined}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
             >
-              <span className="text-lg">{link.icon}</span>
-              {!collapsed && <span>{link.name}</span>}
-            </NavLink>
+              <NavLink
+                to={link.to}
+                className={({ isActive }) =>
+                  `${linkBase} ${isActive ? activeLink : ""} ${
+                    collapsed ? "justify-center" : ""
+                  }`
+                }
+                onClick={() => setMobileOpen(false)}
+              >
+                <span className="text-lg">{link.icon}</span>
+                {!collapsed && (
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                  >
+                    {link.name}
+                  </motion.span>
+                )}
+              </NavLink>
+            </motion.div>
           ))}
         </nav>
 
         {!collapsed && (
-          <div className="p-4 text-xs text-gray-400 dark:text-gray-500 text-center border-t border-gray-200 dark:border-slate-700">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="p-4 text-xs text-gray-400 text-center border-t dark:border-slate-700"
+          >
             © 2026 GoTicket
-          </div>
+          </motion.div>
         )}
-      </div>
+      </motion.div>
 
-      <button
+      <motion.button
+        whileTap={{ scale: 0.9 }}
         className="fixed bottom-4 right-4 md:hidden bg-purple-500 text-white p-3 rounded-full shadow-lg z-50"
         onClick={() => setMobileOpen(true)}
       >
         ☰
-      </button>
+      </motion.button>
     </>
   );
 };
