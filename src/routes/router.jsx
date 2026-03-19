@@ -11,6 +11,7 @@ import BookTicket from "../pages/BookTicket/BookTicket";
 import TicketDetails from "../components/TicketDetails/TicketDetails";
 import PaymentSuccess from "../pages/Payment/PaymentSuccess";
 import PaymentCancel from "../pages/Payment/PaymentCancel";
+import DashboardLayout from "../layouts/DashboardLayout";
 
 
 export const router = createBrowserRouter([
@@ -74,10 +75,22 @@ export const router = createBrowserRouter([
       },
       {
         path: "payment-cancelled",
-        element:<PrivateRoute>
-          <PaymentCancel/>
-        </PrivateRoute>
+        element: (
+          <PrivateRoute>
+            <PaymentCancel />
+          </PrivateRoute>
+        ),
       },
     ],
+  },
+  {
+    path: "dashboard",
+    element: (
+      <PrivateRoute>
+        <DashboardLayout />{" "}
+      </PrivateRoute>
+    ),
+    children:[
+    ]
   },
 ]);
