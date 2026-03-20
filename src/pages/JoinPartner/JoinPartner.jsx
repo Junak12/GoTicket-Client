@@ -1,5 +1,5 @@
 // src/pages/JoinPartner/JoinPartner.jsx
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -38,6 +38,9 @@ const JoinPartner = () => {
 
   const instance = useAxios();
   const { user } = useAuth();
+    useEffect(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+    }, []);
 
   const getInputStyle = (field) => {
     if (!touchedFields[field]) {

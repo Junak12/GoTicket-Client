@@ -67,7 +67,7 @@ const handleStatusChange = async (id, newStatus) => {
 
   return (
     <div className="p-4 md:pl-60">
-      <h2 className="text-2xl font-semibold mb-4">Manage Tickets</h2>
+      <h2 className="text-2xl text-cyan-400 text-center font-semibold mb-4">Manage Tickets</h2>
 
       {/* Desktop Table */}
       <div className="hidden md:block overflow-x-auto">
