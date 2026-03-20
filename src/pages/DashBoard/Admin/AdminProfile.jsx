@@ -1,9 +1,10 @@
 import React from 'react'
+import Profile from '../User/Profile'
 
 const AdminProfile = () => {
   return (
-    <div className='pl-80'>
-      Hello Admin
+    <div>
+      <Profile/>
     </div>
   )
 }
