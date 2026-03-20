@@ -16,6 +16,7 @@ import RoleRoute from "./RoleRoute";
 import Profile from "../pages/DashBoard/User/Profile";
 import MyBookings from "../pages/DashBoard/User/MyBookings";
 import Transactions from "../pages/DashBoard/User/Transactions";
+import JoinPartner from "../pages/JoinPartner/JoinPartner";
 
 export const router = createBrowserRouter([
   {
@@ -47,6 +48,12 @@ export const router = createBrowserRouter([
             <TicketDetails />
           </PrivateRoute>
         ),
+      },
+      {
+        path: "vendor",
+        element:<PrivateRoute>
+          <JoinPartner/>
+        </PrivateRoute>
       },
     ],
   },
