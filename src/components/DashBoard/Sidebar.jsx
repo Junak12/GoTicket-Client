@@ -63,7 +63,7 @@ const Sidebar = () => {
     { name: "Admin Profile", to: "/dashboard/admin/profile", icon: <FaUsers /> },
     {
       name: "Manage Users",
-      to: "/dashboard/admin/users",
+      to: "/dashboard/admin/manage-users",
       icon: <FaStore />,
     },
     {
