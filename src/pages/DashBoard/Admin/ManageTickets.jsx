@@ -1,8 +1,8 @@
 import React from "react";
-import useAxios from "../../../hooks/Axios/useAxios";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
+import useAxios from "../../../hooks/Axios/useAxios";
 
 const ManageTickets = () => {
   const instance = useAxios();
@@ -31,16 +31,12 @@ const ManageTickets = () => {
         showCancelButton: true,
         confirmButtonText: "Yes, do it!",
       });
-
       if (!confirm.isConfirmed) return;
 
-      let url = "";
-
-      if (newStatus === "approved") {
-        url = `/admin/ticket/${id}/approved`;
-      } else if (newStatus === "rejected") {
-        url = `/admin/ticket/${id}/rejected`;
-      }
+      const url =
+        newStatus === "approved"
+          ? `/admin/ticket/${id}/approved`
+          : `/admin/ticket/${id}/rejected`;
 
       const res = await instance.patch(url);
 
@@ -51,191 +47,224 @@ const ManageTickets = () => {
           timer: 1500,
           showConfirmButton: false,
         });
-
-        await refetch(); // 🔥 refresh UI
+        await refetch();
       }
     } catch (err) {
-      console.error(err);
-      Swal.fire({
-        icon: "error",
-        title: "Something went wrong",
-      });
+      Swal.fire({ icon: "error", title: "Something went wrong" });
     }
   };
 
-  if (isLoading) return <div className="p-4 md:pl-60">Loading tickets...</div>;
   if (isError)
     return (
       <div className="p-4 md:pl-60 text-red-500">Error loading tickets</div>
     );
 
   return (
-    <div className="p-4 md:pl-60">
-      <h2 className="text-2xl text-cyan-400 text-center font-semibold mb-4">
+    <motion.div
+      className="p-4 md:pl-60 text-gray-800 dark:text-white"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4 }}
+    >
+      <h2 className="text-2xl text-cyan-500 text-center font-semibold mb-6">
         Manage Tickets
       </h2>
 
-      {/* Desktop Table */}
-      <div className="hidden md:block overflow-x-auto">
-        <table className="min-w-full border border-gray-200 dark:border-slate-700 table-auto">
-          <thead className="bg-gray-100 dark:bg-slate-800">
-            <tr>
-              <th className="px-3 py-3 text-left">Title</th>
-              <th className="px-3 py-3 text-left">Vendor</th>
-              <th className="px-3 py-3 text-left">From → To</th>
-              <th className="px-3 py-3 text-left">Transport</th>
-              <th className="px-3 py-3 text-left">Price</th>
-              <th className="px-3 py-3 text-left">Qty</th>
-              <th className="px-3 py-3 text-left">Departure</th>
-              <th className="px-3 py-3 text-left">Status</th>
-              <th className="px-3 py-3 text-center">Actions</th>
-            </tr>
-          </thead>
+      {/* Loading */}
+      {isLoading && (
+        <div className="space-y-3">
+          {Array(5)
+            .fill(0)
+            .map((_, idx) => (
+              <motion.div
+                key={idx}
+                className="h-16 w-full bg-gray-200 dark:bg-slate-700 rounded"
+                animate={{ opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 1.2, repeat: Infinity }}
+              />
+            ))}
+        </div>
+      )}
 
-          <tbody>
+      {!isLoading && (
+        <>
+          {/* Desktop Table */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="min-w-full border border-gray-200 dark:border-slate-700">
+              <thead className="bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-white">
+                <tr>
+                  <th className="px-3 py-3 text-left">Title</th>
+                  <th className="px-3 py-3 text-left">Vendor</th>
+                  <th className="px-3 py-3 text-left">Route</th>
+                  <th className="px-3 py-3 text-left">Type</th>
+                  <th className="px-3 py-3 text-left">Price</th>
+                  <th className="px-3 py-3 text-left">Qty</th>
+                  <th className="px-3 py-3 text-left">Departure</th>
+                  <th className="px-3 py-3 text-left">Status</th>
+                  <th className="px-3 py-3 text-center">Actions</th>
+                </tr>
+              </thead>
+
+              <tbody className="bg-white dark:bg-slate-900 divide-y dark:divide-slate-700">
+                {tickets.map((ticket, index) => {
+                  const isPending = ticket.status === "pending";
+                  const isApproved = ticket.status === "approved";
+                  const now = Date.now();
+                  const departure = new Date(
+                    ticket.departureDateTime,
+                  ).getTime();
+                  const isExpired = departure < now;
+                  const isActionDisabled = !isPending || isExpired;
+
+                  return (
+                    <motion.tr
+                      key={ticket._id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      whileHover={{ scale: 1.01 }}
+                      className="hover:bg-gray-50 dark:hover:bg-slate-700"
+                    >
+                      <td className="px-3 py-3">{ticket.title}</td>
+                      <td className="px-3 py-3">{ticket.vendorEmail}</td>
+                      <td className="px-3 py-3">
+                        {ticket.from} → {ticket.to}
+                      </td>
+                      <td className="px-3 py-3">{ticket.transportType}</td>
+                      <td className="px-3 py-3">৳ {ticket.price}</td>
+                      <td className="px-3 py-3">{ticket.quantity}</td>
+
+                      <td className="px-3 py-3">
+                        {new Date(ticket.departureDateTime).toLocaleString()}
+                        {isExpired && (
+                          <span className="ml-2 text-red-500 text-xs">
+                            (Expired)
+                          </span>
+                        )}
+                      </td>
+
+                      <td
+                        className={`px-3 py-3 font-semibold ${
+                          isExpired
+                            ? "text-gray-400"
+                            : isPending
+                              ? "text-yellow-500"
+                              : isApproved
+                                ? "text-green-500"
+                                : "text-red-500"
+                        }`}
+                      >
+                        {ticket.status}
+                      </td>
+
+                      <td className="px-3 py-3 text-center">
+                        <div className="flex justify-center gap-2">
+                          <motion.button
+                            whileTap={{ scale: 0.9 }}
+                            whileHover={{ scale: 1.05 }}
+                            disabled={isActionDisabled}
+                            className={`px-3 py-1 rounded transition ${
+                              isActionDisabled
+                                ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                                : "bg-green-500 hover:bg-green-600 text-white"
+                            }`}
+                            onClick={() =>
+                              handleStatusChange(ticket._id, "approved")
+                            }
+                          >
+                            Approve
+                          </motion.button>
+
+                          <motion.button
+                            whileTap={{ scale: 0.9 }}
+                            whileHover={{ scale: 1.05 }}
+                            disabled={isActionDisabled}
+                            className={`px-3 py-1 rounded transition ${
+                              isActionDisabled
+                                ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                                : "bg-red-500 hover:bg-red-600 text-white"
+                            }`}
+                            onClick={() =>
+                              handleStatusChange(ticket._id, "rejected")
+                            }
+                          >
+                            Reject
+                          </motion.button>
+                        </div>
+                      </td>
+                    </motion.tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile */}
+          <div className="md:hidden flex flex-col gap-4">
             {tickets.map((ticket) => {
               const isPending = ticket.status === "pending";
-              const isApproved = ticket.status === "approved";
-
               const now = Date.now();
               const departure = new Date(ticket.departureDateTime).getTime();
               const isExpired = departure < now;
-
               const isActionDisabled = !isPending || isExpired;
 
               return (
-                <motion.tr
+                <motion.div
                   key={ticket._id}
-                  whileHover={{ scale: 1.01 }}
-                  className="hover:bg-gray-50 dark:hover:bg-slate-700"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  whileHover={{ scale: 1.02 }}
+                  className="bg-white dark:bg-slate-900 text-gray-800 dark:text-white shadow rounded-xl p-4"
                 >
-                  <td className="px-3 py-3">{ticket.title}</td>
-                  <td className="px-3 py-3">{ticket.vendorEmail}</td>
-                  <td className="px-3 py-3">
+                  <h3 className="font-semibold text-lg">{ticket.title}</h3>
+                  <p>
                     {ticket.from} → {ticket.to}
-                  </td>
-                  <td className="px-3 py-3">{ticket.transportType}</td>
-                  <td className="px-3 py-3">৳ {ticket.price}</td>
-                  <td className="px-3 py-3">{ticket.quantity}</td>
-                  <td className="px-3 py-3">
+                  </p>
+                  <p>৳ {ticket.price}</p>
+
+                  <p>
                     {new Date(ticket.departureDateTime).toLocaleString()}
                     {isExpired && (
                       <span className="ml-2 text-red-500 text-xs">
                         (Expired)
                       </span>
                     )}
-                  </td>
+                  </p>
 
-                  <td
-                    className={`px-3 py-3 font-semibold ${
-                      isExpired
-                        ? "text-gray-500"
-                        : isPending
-                          ? "text-yellow-600"
-                          : isApproved
-                            ? "text-green-600"
-                            : "text-red-600"
-                    }`}
-                  >
-                    {ticket.status}
-                  </td>
+                  <div className="flex gap-2 mt-3">
+                    <motion.button
+                      whileTap={{ scale: 0.9 }}
+                      className={`flex-1 py-1 rounded ${
+                        isActionDisabled
+                          ? "bg-gray-300 text-gray-600"
+                          : "bg-green-500 text-white"
+                      }`}
+                      disabled={isActionDisabled}
+                      onClick={() => handleStatusChange(ticket._id, "approved")}
+                    >
+                      Approve
+                    </motion.button>
 
-                  <td className="px-3 py-3 text-center">
-                    <div className="flex justify-center gap-2">
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className={`px-3 py-1 rounded ${
-                          isActionDisabled
-                            ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-                            : "bg-green-500 hover:bg-green-600 text-white"
-                        }`}
-                        onClick={() =>
-                          handleStatusChange(ticket._id, "approved")
-                        }
-                        disabled={isActionDisabled}
-                      >
-                        Approve
-                      </motion.button>
-
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className={`px-3 py-1 rounded ${
-                          isActionDisabled
-                            ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-                            : "bg-red-500 hover:bg-red-600 text-white"
-                        }`}
-                        onClick={() =>
-                          handleStatusChange(ticket._id, "rejected")
-                        }
-                        disabled={isActionDisabled}
-                      >
-                        Reject
-                      </motion.button>
-                    </div>
-                  </td>
-                </motion.tr>
+                    <motion.button
+                      whileTap={{ scale: 0.9 }}
+                      className={`flex-1 py-1 rounded ${
+                        isActionDisabled
+                          ? "bg-gray-300 text-gray-600"
+                          : "bg-red-500 text-white"
+                      }`}
+                      disabled={isActionDisabled}
+                      onClick={() => handleStatusChange(ticket._id, "rejected")}
+                    >
+                      Reject
+                    </motion.button>
+                  </div>
+                </motion.div>
               );
             })}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Mobile */}
-      <div className="md:hidden flex flex-col gap-4">
-        {tickets.map((ticket) => {
-          const isPending = ticket.status === "pending";
-          const now = Date.now();
-          const departure = new Date(ticket.departureDateTime).getTime();
-          const isExpired = departure < now;
-
-          const isActionDisabled = !isPending || isExpired;
-
-          return (
-            <div
-              key={ticket._id}
-              className="bg-white dark:bg-slate-900 shadow rounded-lg p-4"
-            >
-              <h3 className="font-semibold">{ticket.title}</h3>
-              <p>
-                {ticket.from} → {ticket.to}
-              </p>
-              <p>৳ {ticket.price}</p>
-
-              <p>
-                {new Date(ticket.departureDateTime).toLocaleString()}
-                {isExpired && (
-                  <span className="ml-2 text-red-500 text-xs">(Expired)</span>
-                )}
-              </p>
-
-              <div className="flex gap-2 mt-2">
-                <button
-                  className={`flex-1 ${
-                    isActionDisabled ? "bg-gray-300" : "bg-green-500 text-white"
-                  }`}
-                  disabled={isActionDisabled}
-                  onClick={() => handleStatusChange(ticket._id, "approved")}
-                >
-                  Approve
-                </button>
-
-                <button
-                  className={`flex-1 ${
-                    isActionDisabled ? "bg-gray-300" : "bg-red-500 text-white"
-                  }`}
-                  disabled={isActionDisabled}
-                  onClick={() => handleStatusChange(ticket._id, "rejected")}
-                >
-                  Reject
-                </button>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
+          </div>
+        </>
+      )}
+    </motion.div>
   );
 };
 
