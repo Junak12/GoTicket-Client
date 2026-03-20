@@ -17,6 +17,7 @@ import Profile from "../pages/DashBoard/User/Profile";
 import MyBookings from "../pages/DashBoard/User/MyBookings";
 import Transactions from "../pages/DashBoard/User/Transactions";
 import JoinPartner from "../pages/JoinPartner/JoinPartner";
+import AdminProfile from "../pages/DashBoard/Admin/AdminProfile";
 
 export const router = createBrowserRouter([
   {
@@ -51,9 +52,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "vendor",
-        element:<PrivateRoute>
-          <JoinPartner/>
-        </PrivateRoute>
+        element: (
+          <PrivateRoute>
+            <JoinPartner />
+          </PrivateRoute>
+        ),
       },
     ],
   },
@@ -111,6 +114,14 @@ export const router = createBrowserRouter([
         element: (
           <RoleRoute allowedRoles={["user"]}>
             <Transactions />
+          </RoleRoute>
+        ),
+      },
+      {
+        path: "/dashboard/admin/profile",
+        element: (
+          <RoleRoute allowedRoles={["admin"]}>
+            <AdminProfile />
           </RoleRoute>
         ),
       },

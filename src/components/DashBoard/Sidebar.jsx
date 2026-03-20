@@ -19,6 +19,8 @@ const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { toggleTheme } = useTheme();
+  //console.log(role);
+  
 
   const linkBase =
     "flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-200 dark:hover:bg-slate-700";
@@ -58,7 +60,7 @@ const Sidebar = () => {
   ];
 
   const adminLinks = [
-    { name: "Manage Users", to: "/dashboard/admin/users", icon: <FaUsers /> },
+    { name: "Admin Profile", to: "/dashboard/admin/profile", icon: <FaUsers /> },
     {
       name: "Manage Vendors",
       to: "/dashboard/admin/vendors",

@@ -4,6 +4,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
+import useAxios from "../../hooks/Axios/useAxios";
+import { useAuth } from "../../hooks/Auth/useAuth";
+import Swal from "sweetalert2";
 
 const schema = z.object({
   fullName: z.string().min(3, "Full name is required"),
@@ -30,10 +33,12 @@ const JoinPartner = () => {
     reset,
   } = useForm({
     resolver: zodResolver(schema),
-    mode: "onChange", // ✅ live validation
+    mode: "onChange",
   });
 
-  // 🎯 Dynamic border color
+  const instance = useAxios();
+  const { user } = useAuth();
+
   const getInputStyle = (field) => {
     if (!touchedFields[field]) {
       return `${baseInput} border-gray-200 dark:border-slate-700 focus:ring-purple-500`;
@@ -44,9 +49,31 @@ const JoinPartner = () => {
     return `${baseInput} border-green-500 focus:ring-green-500`;
   };
 
-  const onSubmit = (data) => {
-    console.log(data);
-    reset();
+  const onSubmit = async (data) => {
+    try {
+      const vendorInfo = {
+        ...data,
+        email: user?.email || data.email, 
+      };
+
+      const res = await instance.post("/vendor-request", vendorInfo);
+
+      Swal.fire({
+        icon: "success",
+        title: "Application Submitted Successfully",
+        text: `Welcome ${data.fullName}!`,
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      reset();
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Submission Failed",
+        text: error.response?.data?.message || error.message,
+      });
+    }
   };
 
   return (
