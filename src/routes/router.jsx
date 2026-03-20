@@ -18,6 +18,7 @@ import MyBookings from "../pages/DashBoard/User/MyBookings";
 import Transactions from "../pages/DashBoard/User/Transactions";
 import JoinPartner from "../pages/JoinPartner/JoinPartner";
 import AdminProfile from "../pages/DashBoard/Admin/AdminProfile";
+import ManageTickets from "../pages/DashBoard/Admin/ManageTickets";
 
 export const router = createBrowserRouter([
   {
@@ -122,6 +123,14 @@ export const router = createBrowserRouter([
         element: (
           <RoleRoute allowedRoles={["admin"]}>
             <AdminProfile />
+          </RoleRoute>
+        ),
+      },
+      {
+        path: "/dashboard/admin/manage-tickets",
+        element: (
+          <RoleRoute allowedRoles={["admin"]}>
+            <ManageTickets />
           </RoleRoute>
         ),
       },

@@ -62,13 +62,13 @@ const Sidebar = () => {
   const adminLinks = [
     { name: "Admin Profile", to: "/dashboard/admin/profile", icon: <FaUsers /> },
     {
-      name: "Manage Vendors",
-      to: "/dashboard/admin/vendors",
+      name: "Manage Users",
+      to: "/dashboard/admin/users",
       icon: <FaStore />,
     },
     {
-      name: "All Tickets",
-      to: "/dashboard/admin/tickets",
+      name: "Manage Tickets",
+      to: "/dashboard/admin/manage-tickets",
       icon: <FaTicketAlt />,
     },
   ];
