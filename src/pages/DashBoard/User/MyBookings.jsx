@@ -1,10 +1,9 @@
 // src/pages/Dashboard/MyBookings.jsx
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-
-import { useAuth } from "../../../hooks/Auth/useAuth";
-import BookingTable from "../../../components/DashBoard/BookingTable";
+import BookingTable from "../../../components/DashBoard/users/BookingTable";
 import useAxios from "../../../hooks/Axios/useAxios";
+import { useAuth } from "../../../hooks/Auth/useAuth";
 
 
 const MyBookings = () => {

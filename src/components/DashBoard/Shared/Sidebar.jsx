@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router";
-import { useRole } from "../../hooks/Role/useRole";
+import { useRole } from "../../../hooks/Role/useRole";
 import { LuSunMoon } from "react-icons/lu";
 import {
   FaUser,
@@ -10,7 +10,7 @@ import {
   FaStore,
   FaClipboardList,
 } from "react-icons/fa";
-import useTheme from "../../hooks/Theme/useTheme";
+import useTheme from "../../../hooks/Theme/useTheme";
 import { motion, AnimatePresence } from "framer-motion";
 
 const Sidebar = () => {

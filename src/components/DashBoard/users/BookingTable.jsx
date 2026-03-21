@@ -1,7 +1,9 @@
-// src/pages/Dashboard/BookingTable.jsx
+
 import React from "react";
 import BookingRow from "./BookingRow";
 import BookingCard from "./BookingCard";
+
+
 
 const BookingTable = ({ bookings }) => {
   return (

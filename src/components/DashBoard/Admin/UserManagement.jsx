@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 import useAxios from "../../../hooks/Axios/useAxios";
 import { useAuth } from "../../../hooks/Auth/useAuth";
 
-const ManageUsers = () => {
+const UserManagement = () => {
   const instance = useAxios();
   const { user } = useAuth();
 
@@ -13,6 +13,7 @@ const ManageUsers = () => {
     hidden: {},
     show: { transition: { staggerChildren: 0.08 } },
   };
+
   const rowVariants = {
     hidden: { opacity: 0, y: 25 },
     show: { opacity: 1, y: 0 },
@@ -44,6 +45,7 @@ const ManageUsers = () => {
       icon: "warning",
       showCancelButton: true,
     });
+
     if (!confirm.isConfirmed) return;
 
     const res = await instance.patch(url);
@@ -57,7 +59,7 @@ const ManageUsers = () => {
 
   return (
     <motion.div
-      className="p-4 md:pl-60 text-gray-800 dark:text-white"
+      className="p-4 md:py-15 py-10 text-gray-800 dark:text-white"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
@@ -117,7 +119,9 @@ const ManageUsers = () => {
                           className="w-10 h-10 rounded-full object-cover"
                         />
                       </td>
+
                       <td className="px-3 py-3">{u.name}</td>
+
                       <td className="px-3 py-3">
                         <span
                           className={`font-semibold ${
@@ -133,30 +137,33 @@ const ManageUsers = () => {
                           {isFraud ? "Fraud" : u.role}
                         </span>
                       </td>
+
                       <td className="px-3 py-3 text-center">
                         <div className="flex justify-center gap-2 flex-wrap">
                           <button
                             disabled={isAdmin}
                             onClick={() => handleRoleChange(u._id, "admin")}
-                            className="px-2 py-1 bg-green-500 text-white rounded disabled:bg-gray-300"
+                            className="px-2 py-1 bg-green-500 text-white rounded disabled:bg-gray-300 cursor-pointer"
                           >
                             Admin
                           </button>
+
                           <button
                             disabled={isVendor || isAdmin}
                             onClick={() => handleRoleChange(u._id, "vendor")}
-                            className="px-2 py-1 bg-blue-500 text-white rounded disabled:bg-gray-300"
+                            className="px-2 py-1 bg-blue-500 text-white rounded disabled:bg-gray-300 cursor-pointer"
                           >
                             Vendor
                           </button>
-                          {isVendor && !isFraud && (
-                            <button
-                              onClick={() => handleRoleChange(u._id, "fraud")}
-                              className="px-2 py-1 bg-red-500 text-white rounded"
-                            >
-                              Fraud
-                            </button>
-                          )}
+
+                          {/* ✅ Always visible Fraud */}
+                          <button
+                            disabled={isFraud}
+                            onClick={() => handleRoleChange(u._id, "fraud")}
+                            className="px-2 py-1 bg-red-500 text-white rounded disabled:bg-gray-300 cursor-pointer"
+                          >
+                            Fraud
+                          </button>
                         </div>
                       </td>
                     </motion.tr>
@@ -179,7 +186,7 @@ const ManageUsers = () => {
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.08 }}
-                  className="bg-white dark:bg-slate-900 shadow rounded-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3"
+                  className="bg-white dark:bg-slate-900 shadow rounded-xl p-4 flex flex-col gap-3"
                 >
                   <div className="flex items-center gap-3">
                     <img
@@ -197,29 +204,32 @@ const ManageUsers = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="flex gap-2 flex-wrap mt-2 md:mt-0">
+
+                  <div className="flex gap-2 flex-wrap">
                     <button
                       disabled={isAdmin}
                       onClick={() => handleRoleChange(u._id, "admin")}
-                      className="flex-1 bg-green-500 text-white py-1 rounded disabled:bg-gray-300"
+                      className="flex-1 bg-green-500 text-white py-1 rounded disabled:bg-gray-300 cursor-pointer"
                     >
                       Admin
                     </button>
+
                     <button
                       disabled={isVendor || isAdmin}
                       onClick={() => handleRoleChange(u._id, "vendor")}
-                      className="flex-1 bg-blue-500 text-white py-1 rounded disabled:bg-gray-300"
+                      className="flex-1 bg-blue-500 text-white py-1 rounded disabled:bg-gray-300 cursor-pointer"
                     >
                       Vendor
                     </button>
-                    {isVendor && !isFraud && (
-                      <button
-                        onClick={() => handleRoleChange(u._id, "fraud")}
-                        className="flex-1 bg-red-500 text-white py-1 rounded"
-                      >
-                        Fraud
-                      </button>
-                    )}
+
+                    {/* ✅ Always visible Fraud */}
+                    <button
+                      disabled={isFraud}
+                      onClick={() => handleRoleChange(u._id, "fraud")}
+                      className="flex-1 bg-red-500 text-white py-1 rounded disabled:bg-gray-300 cursor-pointer"
+                    >
+                      Fraud
+                    </button>
                   </div>
                 </motion.div>
               );
@@ -231,4 +241,4 @@ const ManageUsers = () => {
   );
 };
 
-export default ManageUsers;
+export default UserManagement;
