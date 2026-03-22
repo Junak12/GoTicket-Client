@@ -87,6 +87,7 @@ const AdvertiseTicket = () => {
                   <th className="px-3 py-3 text-left">Title</th>
                   <th className="px-3 py-3 text-left">From</th>
                   <th className="px-3 py-3 text-left">To</th>
+                  <th className="px-3 py-3 text-left">Transport</th>
                   <th className="px-3 py-3 text-left">Price</th>
                   <th className="px-3 py-3 text-left">Quantity</th>
                   <th className="px-3 py-3 text-center">Advertise</th>
@@ -108,6 +109,7 @@ const AdvertiseTicket = () => {
                     <td className="px-3 py-3">{t.title}</td>
                     <td className="px-3 py-3">{t.from}</td>
                     <td className="px-3 py-3">{t.to}</td>
+                    <td className="px-3 py-3">{t.transportType}</td>
                     <td className="px-3 py-3">৳{t.price}</td>
                     <td className="px-3 py-3">{t.quantity}</td>
 
