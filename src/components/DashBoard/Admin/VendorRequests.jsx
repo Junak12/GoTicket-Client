@@ -21,20 +21,17 @@ const VendorRequests = () => {
     queryFn: fetchVendors,
   });
 
-  const handleStatus = async (id, type) => {
-    const confirm = await Swal.fire({
-      title: "Are you sure?",
-      text: `You want to ${type} this application?`,
-      icon: "warning",
-      showCancelButton: true,
-    });
+const handleStatus = async (id, type) => {
+  const confirm = await Swal.fire({
+    title: "Are you sure?",
+    text: `You want to ${type} this application?`,
+    icon: "warning",
+    showCancelButton: true,
+  });
+  if (!confirm.isConfirmed) return;
 
-    if (!confirm.isConfirmed) return;
-
-    const res = await instance.patch(`/admin/vendor-application/${id}`, {
-      status: type,
-    });
-
+  try {
+    const res = await instance.patch(`/admin/vendor-application/approve/${id}`);
     if (res.data.success) {
       Swal.fire(
         `${type.charAt(0).toUpperCase() + type.slice(1)}!`,
@@ -43,7 +40,16 @@ const VendorRequests = () => {
       );
       refetch();
     }
-  };
+  } catch (err) {
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: err.response?.data?.message || "Something went wrong!",
+    });
+  }
+};
+
+
 
   const tableVariants = {
     hidden: {},

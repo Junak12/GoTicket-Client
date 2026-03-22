@@ -52,32 +52,42 @@ const JoinPartner = () => {
     return `${baseInput} border-green-500 focus:ring-green-500`;
   };
 
-  const onSubmit = async (data) => {
-    try {
-      const vendorInfo = {
-        ...data,
-        email: user?.email || data.email, 
-      };
+const onSubmit = async (data) => {
+  const vendorInfo = {
+    ...data,
+    email: data.email,
+  };
 
-      const res = await instance.post("/vendor-request", vendorInfo);
+  try {
+    const res = await instance.post("/vendor-request", vendorInfo);
 
+    if (res.data.success) {
       Swal.fire({
         icon: "success",
-        title: "Application Submitted Successfully",
-        text: `Welcome ${data.fullName}!`,
-        timer: 2000,
-        showConfirmButton: false,
+        title: "Application Submitted!",
+        html: `<p>Welcome <strong>${data.fullName}</strong>! Your vendor application is now pending approval.</p>`,
+        timer: 3000,
+        showConfirmButton: true,
+        confirmButtonText: "OK",
+        didClose: () => reset(), 
       });
-
-      reset();
-    } catch (error) {
+    } else {
       Swal.fire({
-        icon: "error",
-        title: "Submission Failed",
-        text: error.response?.data?.message || error.message,
+        icon: "warning",
+        title: "Application Not Submitted",
+        text: res.data.message || "Please try again",
+        confirmButtonText: "OK",
       });
     }
-  };
+  } catch (error) {
+    Swal.fire({
+      icon: "error",
+      title: "Submission Failed",
+      text : "This Email already Taken",
+      confirmButtonText: "OK",
+    });
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-16">
