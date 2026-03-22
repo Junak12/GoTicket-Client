@@ -20,6 +20,7 @@ import JoinPartner from "../pages/JoinPartner/JoinPartner";
 import AdminProfile from "../pages/DashBoard/Admin/AdminProfile";
 import ManageTickets from "../pages/DashBoard/Admin/ManageTickets";
 import ManageUsers from "../pages/DashBoard/Admin/ManageUsers";
+import AdvertiseTicket from "../pages/DashBoard/Admin/AdvertiseTicket";
 
 export const router = createBrowserRouter([
   {
@@ -143,6 +144,16 @@ export const router = createBrowserRouter([
           </RoleRoute>
         ),
       },
+      {
+        path: "/dashboard/admin/advertise-tickets",
+        element: (
+          <PrivateRoute allowedRoles={["admin"]}>
+            <AdvertiseTicket />
+          </PrivateRoute>
+        ),
+      },
+
+      
     ],
   },
 ]);

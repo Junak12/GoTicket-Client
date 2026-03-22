@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router";
 import { useRole } from "../../../hooks/Role/useRole";
 import { LuSunMoon } from "react-icons/lu";
+import { FcAdvertising } from "react-icons/fc";
 import {
   FaUser,
   FaTicketAlt,
@@ -60,7 +61,11 @@ const Sidebar = () => {
   ];
 
   const adminLinks = [
-    { name: "Admin Profile", to: "/dashboard/admin/profile", icon: <FaUsers /> },
+    {
+      name: "Admin Profile",
+      to: "/dashboard/admin/profile",
+      icon: <FaUsers />,
+    },
     {
       name: "Manage Users",
       to: "/dashboard/admin/manage-users",
@@ -70,6 +75,11 @@ const Sidebar = () => {
       name: "Manage Tickets",
       to: "/dashboard/admin/manage-tickets",
       icon: <FaTicketAlt />,
+    },
+    {
+      name: "Advertise Tickets",
+      to: "/dashboard/admin/advertise-tickets",
+      icon: <FcAdvertising />,
     },
   ];
 
