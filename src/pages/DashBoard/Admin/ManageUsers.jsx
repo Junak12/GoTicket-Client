@@ -10,7 +10,7 @@ const ManageUsers = () => {
     "px-3 py-2 rounded-lg text-lg font-semibold transition-all duration-300 cursor-pointer";
 
   return (
-    <div className="md:pl-60 py-10">
+    <div className="md:pl-60 py-5">
       <div className="flex items-center justify-evenly">
         {/* Users Button */}
         <div>

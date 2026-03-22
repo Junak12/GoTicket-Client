@@ -8,6 +8,7 @@ import { useAuth } from "../../../hooks/Auth/useAuth";
 const UserManagement = () => {
   const instance = useAxios();
   const { user } = useAuth();
+  const [actionDisabled, setActionDisabled] = React.useState(false);
 
   const tableVariants = {
     hidden: {},
@@ -21,7 +22,7 @@ const UserManagement = () => {
 
   const fetchUsers = async () => {
     const res = await instance.get(`/admin/users?email=${user?.email}`);
-    return res.data.filter((u) => u.email !== user?.email);
+    return res.data;
   };
 
   const {
@@ -34,25 +35,36 @@ const UserManagement = () => {
   });
 
   const handleRoleChange = async (id, type) => {
+    setActionDisabled(true);
+
     let url = "";
     if (type === "admin") url = `/admin/users/${id}/make-admin`;
-    if (type === "vendor") url = `/admin/users/${id}/make-vendor`;
-    if (type === "fraud") url = `/admin/users/${id}/fraud`;
+    else if (type === "vendor") url = `/admin/users/${id}/make-vendor`;
+    else if (type === "fraud") url = `/admin/users/${id}/make-fraud`;
 
     const confirm = await Swal.fire({
       title: "Are you sure?",
-      text: `You want to make this ${type}?`,
+      text: `You want to make this user ${type}?`,
       icon: "warning",
       showCancelButton: true,
     });
 
-    if (!confirm.isConfirmed) return;
-
-    const res = await instance.patch(url);
-    if (res.data.success) {
-      Swal.fire("Updated!", "", "success");
-      refetch();
+    if (!confirm.isConfirmed) {
+      setActionDisabled(false);
+      return;
     }
+
+    try {
+      const res = await instance.patch(url);
+      if (res.data.success) {
+        Swal.fire("Updated!", "", "success");
+        refetch();
+      }
+    } catch {
+      Swal.fire("Error", "Something went wrong", "error");
+    }
+
+    setActionDisabled(false);
   };
 
   const defaultAvatar = "https://i.ibb.co/q3kx0fGL/ava.png";
@@ -82,7 +94,6 @@ const UserManagement = () => {
 
       {!isLoading && (
         <>
-          {/* Desktop Table */}
           <div className="hidden md:block overflow-x-auto">
             <table className="min-w-full border dark:border-slate-700">
               <thead className="bg-gray-100 dark:bg-slate-800">
@@ -103,7 +114,7 @@ const UserManagement = () => {
                 {users.map((u) => {
                   const isAdmin = u.role === "admin";
                   const isVendor = u.role === "vendor";
-                  const isFraud = u.isFraud;
+                  const isFraud = u.isFraud === true;
 
                   return (
                     <motion.tr
@@ -134,14 +145,14 @@ const UserManagement = () => {
                                   : "text-gray-500"
                           }`}
                         >
-                          {isFraud ? "Fraud" : u.role}
+                          {u.role}
                         </span>
                       </td>
 
                       <td className="px-3 py-3 text-center">
                         <div className="flex justify-center gap-2 flex-wrap">
                           <button
-                            disabled={isAdmin}
+                            disabled={actionDisabled || isAdmin}
                             onClick={() => handleRoleChange(u._id, "admin")}
                             className="px-2 py-1 bg-green-500 text-white rounded disabled:bg-gray-300 cursor-pointer"
                           >
@@ -149,16 +160,15 @@ const UserManagement = () => {
                           </button>
 
                           <button
-                            disabled={isVendor || isAdmin}
+                            disabled={actionDisabled || isVendor || isAdmin}
                             onClick={() => handleRoleChange(u._id, "vendor")}
                             className="px-2 py-1 bg-blue-500 text-white rounded disabled:bg-gray-300 cursor-pointer"
                           >
                             Vendor
                           </button>
 
-                          {/* ✅ Always visible Fraud */}
                           <button
-                            disabled={isFraud}
+                            disabled={actionDisabled || isFraud}
                             onClick={() => handleRoleChange(u._id, "fraud")}
                             className="px-2 py-1 bg-red-500 text-white rounded disabled:bg-gray-300 cursor-pointer"
                           >
@@ -173,12 +183,11 @@ const UserManagement = () => {
             </table>
           </div>
 
-          {/* Mobile Cards */}
           <div className="md:hidden flex flex-col gap-4">
             {users.map((u, index) => {
               const isAdmin = u.role === "admin";
               const isVendor = u.role === "vendor";
-              const isFraud = u.isFraud;
+              const isFraud = u.isFraud === true;
 
               return (
                 <motion.div
@@ -197,36 +206,34 @@ const UserManagement = () => {
                     <div>
                       <h3 className="font-semibold">{u.name}</h3>
                       <p className="text-sm mt-1">
-                        Role:{" "}
-                        <span className="font-semibold">
-                          {isFraud ? "Fraud" : u.role}
-                        </span>
+                        Role: <span className="font-semibold">{u.role}</span>
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex gap-2 flex-wrap">
+                  <div className="flex justify-center gap-2 flex-wrap">
                     <button
-                      disabled={isAdmin}
+                      disabled={actionDisabled || isAdmin || isFraud}
                       onClick={() => handleRoleChange(u._id, "admin")}
-                      className="flex-1 bg-green-500 text-white py-1 rounded disabled:bg-gray-300 cursor-pointer"
+                      className="px-2 py-1 bg-green-500 text-white rounded disabled:bg-gray-300 cursor-pointer"
                     >
                       Admin
                     </button>
 
                     <button
-                      disabled={isVendor || isAdmin}
+                      disabled={
+                        actionDisabled || isVendor || isAdmin || isFraud
+                      }
                       onClick={() => handleRoleChange(u._id, "vendor")}
-                      className="flex-1 bg-blue-500 text-white py-1 rounded disabled:bg-gray-300 cursor-pointer"
+                      className="px-2 py-1 bg-blue-500 text-white rounded disabled:bg-gray-300 cursor-pointer"
                     >
                       Vendor
                     </button>
 
-                    {/* ✅ Always visible Fraud */}
                     <button
-                      disabled={isFraud}
+                      disabled={actionDisabled || isFraud}
                       onClick={() => handleRoleChange(u._id, "fraud")}
-                      className="flex-1 bg-red-500 text-white py-1 rounded disabled:bg-gray-300 cursor-pointer"
+                      className="px-2 py-1 bg-red-500 text-white rounded disabled:bg-gray-300 cursor-pointer"
                     >
                       Fraud
                     </button>
