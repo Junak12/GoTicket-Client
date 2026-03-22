@@ -21,35 +21,39 @@ const VendorRequests = () => {
     queryFn: fetchVendors,
   });
 
-const handleStatus = async (id, type) => {
-  const confirm = await Swal.fire({
-    title: "Are you sure?",
-    text: `You want to ${type} this application?`,
-    icon: "warning",
-    showCancelButton: true,
-  });
-  if (!confirm.isConfirmed) return;
-
-  try {
-    const res = await instance.patch(`/admin/vendor-application/approve/${id}`);
-    if (res.data.success) {
-      Swal.fire(
-        `${type.charAt(0).toUpperCase() + type.slice(1)}!`,
-        "",
-        "success",
-      );
-      refetch();
-    }
-  } catch (err) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: err.response?.data?.message || "Something went wrong!",
+  const handleStatus = async (id, type) => {
+    const confirm = await Swal.fire({
+      title: "Are you sure?",
+      text: `You want to ${type} this application?`,
+      icon: "warning",
+      showCancelButton: true,
     });
-  }
-};
+    if (!confirm.isConfirmed) return;
 
+    let url = "";
+    if (type === "approved") url = `/admin/vendor-application/approve/${id}`;
+    else if (type === "rejected") url = `/admin/vendor-application/reject/${id}`;
 
+    try {
+      const res = await instance.patch(url);
+      if (res.data.success) {
+        Swal.fire({
+          icon: "success",
+          title: `${type.charAt(0).toUpperCase() + type.slice(1)}!`,
+          text: res.data.message,
+          confirmButtonText: "OK",
+        });
+        refetch();
+      }
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: err.response?.data?.message || "Something went wrong!",
+        confirmButtonText: "OK",
+      });
+    }
+  };
 
   const tableVariants = {
     hidden: {},
