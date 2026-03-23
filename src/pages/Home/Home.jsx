@@ -4,6 +4,7 @@ import Partners from '../../components/Partners/Partners'
 import PopularRoutes from '../../components/PopularRoutes/PopularRoutes';
 import WhyChoose from '../../components/WhyChoose/WhyChoose';
 import AdvertisementSection from '../../components/AdvertisementSection/AdvertisementSection';
+import LatestTicketsSection from '../../components/LatestTicketsSection/LatestTicketsSection';
 
 const Home = () => {
   
@@ -17,6 +18,10 @@ const Home = () => {
 
       <div className="py-8">
         <AdvertisementSection />
+      </div>
+
+      <div>
+        <LatestTicketsSection/>
       </div>
       <div className="mt-8">
         <Partners />

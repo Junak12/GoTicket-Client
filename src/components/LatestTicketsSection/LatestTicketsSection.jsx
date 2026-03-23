@@ -7,7 +7,7 @@ const LatestTicketsSection = () => {
   const instance = useAxios();
 
   const fetchLatestTickets = async () => {
-    const res = await instance.get("/tickets"); // or your endpoint
+    const res = await instance.get("/latest-tickets");
     return res.data;
   };
 
@@ -34,10 +34,14 @@ const LatestTicketsSection = () => {
     .slice(0, 8);
 
   return (
-    <section className="py-16 px-4 bg-white dark:bg-slate-900">
+    <section className="py-16 px-4 bg-gradient-to-br from-indigo-50 via-white to-cyan-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950">
       {/* Header */}
       <div className="text-center mb-12 max-w-2xl mx-auto">
-        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-800 dark:text-white">
+        <h2
+          className="text-3xl md:text-4xl font-extrabold 
+                       bg-gradient-to-r from-purple-600 via-pink-500 to-yellow-400 
+                       bg-clip-text text-transparent"
+        >
           Latest Tickets 🎟️
         </h2>
         <p className="text-gray-500 mt-3 text-sm md:text-base">
