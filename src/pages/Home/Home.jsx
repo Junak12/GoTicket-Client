@@ -15,7 +15,7 @@ const Home = () => {
     <div className="mt-18">
       <Hero />
 
-      <div className="mt-8">
+      <div className="py-8">
         <AdvertisementSection />
       </div>
       <div className="mt-8">

@@ -5,6 +5,15 @@ import { LuMapPin, LuUsers, LuTicket } from "react-icons/lu";
 const TicketList = ({ tickets }) => {
   const navigate = useNavigate();
 
+  // 🔥 Perk Icon Logic
+  const getPerkIcon = (name) => {
+    const key = name.toLowerCase();
+    if (key.includes("wifi")) return "📶";
+    if (key.includes("ac")) return "❄️";
+    if (key.includes("snack") || key.includes("food")) return "🍔";
+    return "✨";
+  };
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
       {tickets.map((ticket) => (
@@ -14,7 +23,7 @@ const TicketList = ({ tickets }) => {
           transition={{ duration: 0.3 }}
           className="bg-white/90 backdrop-blur-md border border-gray-200 rounded-2xl shadow-md overflow-hidden flex flex-col h-full"
         >
-
+          {/* Image */}
           <div className="relative">
             <img
               src={ticket.image}
@@ -26,14 +35,14 @@ const TicketList = ({ tickets }) => {
             </span>
           </div>
 
-
+          {/* Content */}
           <div className="p-4 sm:p-5 flex flex-col justify-between flex-1">
             {/* Title */}
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800 truncate">
               {ticket.title}
             </h2>
 
-
+            {/* Route */}
             <div className="flex items-center gap-2 text-gray-500 mt-2 text-xs sm:text-sm">
               <LuMapPin size={16} />
               <span>
@@ -42,6 +51,25 @@ const TicketList = ({ tickets }) => {
             </div>
 
 
+            <div className="flex flex-wrap gap-2 mt-3">
+              {ticket.perks?.slice(0, 3).map((perk, i) => (
+                <span
+                  key={i}
+                  className="flex items-center gap-1 text-[10px] sm:text-xs px-2.5 py-1 rounded-full bg-gray-100 text-gray-700 border border-gray-200"
+                >
+                  <span>{getPerkIcon(perk.name)}</span>
+                  {perk.name}
+                </span>
+              ))}
+
+              {ticket.perks?.length > 3 && (
+                <span className="text-[10px] sm:text-xs text-gray-500">
+                  +{ticket.perks.length - 3} more
+                </span>
+              )}
+            </div>
+
+            {/* Info */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-4 text-xs sm:text-sm text-gray-500 gap-2 sm:gap-0">
               <div className="flex items-center gap-1">
                 <LuUsers size={16} />
@@ -53,7 +81,7 @@ const TicketList = ({ tickets }) => {
               </div>
             </div>
 
-
+            {/* Price + Button */}
             <div className="flex flex-col sm:flex-row justify-between items-center mt-5 gap-3 sm:gap-0">
               <span className="text-lg sm:text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">
                 ৳ {ticket.price}
@@ -63,7 +91,7 @@ const TicketList = ({ tickets }) => {
                 whileTap={{ scale: 0.95 }}
                 whileHover={{ scale: 1.05 }}
                 onClick={() => navigate(`/tickets/${ticket._id}`)}
-                className="w-full cursor-pointer sm:w-auto px-4 py-2 text-sm sm:text-base rounded-lg text-black font-semibold bg-[#ACD487] shadow hover:opacity-90 transition"
+                className="w-full cursor-pointer sm:w-auto px-4 py-2 text-sm sm:text-base rounded-lg  font-semibold text-white bg-[#ACD487] shadow hover:opacity-90 transition"
               >
                 Book Now
               </motion.button>
