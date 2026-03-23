@@ -21,6 +21,7 @@ import AdminProfile from "../pages/DashBoard/Admin/AdminProfile";
 import ManageTickets from "../pages/DashBoard/Admin/ManageTickets";
 import ManageUsers from "../pages/DashBoard/Admin/ManageUsers";
 import AdvertiseTicket from "../pages/DashBoard/Admin/AdvertiseTicket";
+import VendorProfile from "../pages/DashBoard/Vendor/VendorProfile";
 
 export const router = createBrowserRouter([
   {
@@ -152,8 +153,14 @@ export const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
-
-      
+      {
+        path: "/dashboard/vendor/profile",
+        element: (
+          <PrivateRoute allowedRoles={["vendor"]}>
+            <VendorProfile />
+          </PrivateRoute>
+        ),
+      },
     ],
   },
 ]);

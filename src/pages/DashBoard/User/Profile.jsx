@@ -15,7 +15,6 @@ const Profile = () => {
   const [file, setFile] = useState(null);
   const [name, setName] = useState("");
 
-  // 🔹 Fetch user
   const { data, isLoading, isError } = useQuery({
     queryKey: ["userProfile", user?.email],
     queryFn: async () => {
@@ -24,6 +23,7 @@ const Profile = () => {
     },
     enabled: !!user?.email,
   });
+
 
   const handleUpdate = async () => {
     try {
@@ -61,23 +61,48 @@ const Profile = () => {
       </div>
     );
   }
+
   if (isError)
-    return <p className="text-center text-red-500">Failed to load</p>;
+    return (
+      <p className="text-center text-red-500 mt-10">Failed to load profile</p>
+    );
 
   return (
     <div className="flex justify-center items-center min-h-[70vh] px-4">
       <div className="w-full max-w-md bg-white dark:bg-slate-800 shadow-xl rounded-3xl p-6">
+        {/* Profile Info */}
         <div className="flex flex-col items-center">
           <img
             src={data?.photo}
+            alt="profile"
             className="w-24 h-24 rounded-full object-cover border-4 border-orange-400"
           />
+
           <h2 className="mt-4 text-xl font-semibold text-gray-800 dark:text-white">
             {data?.name}
           </h2>
+
           <p className="text-gray-500">{data?.email}</p>
+
+          <div className="mt-2">
+            <span
+              className={`px-3 py-1 text-xs font-semibold rounded-full
+              ${
+                data?.role === "admin"
+                  ? "bg-red-100 text-red-600"
+                  : data?.role === "vendor"
+                    ? "bg-blue-100 text-blue-600"
+                    : data?.role === "fraud"
+                      ? "bg-gray-200 text-gray-700"
+                      : "bg-green-100 text-green-600"
+              }`}
+            >
+              {data?.role?.toUpperCase()}
+            </span>
+          </div>
         </div>
 
+        {/* Edit Button */}
         <motion.button
           whileTap={{ scale: 0.95 }}
           whileHover={{ scale: 1.05 }}
@@ -108,15 +133,18 @@ const Profile = () => {
             <div className="flex justify-center mb-4">
               <img
                 src={preview}
+                alt="preview"
                 className="w-20 h-20 rounded-full object-cover"
               />
             </div>
 
-            {/* Name */}
+            {/* Name Input */}
             <input
-              className="w-full px-4 py-2 border rounded-lg 
-             text-gray-800 dark:text-white mb-4
-             placeholder-gray-400 dark:placeholder-white"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full px-4 py-2 border rounded-lg mb-4 
+              text-gray-800 dark:text-white 
+              placeholder-gray-400 dark:placeholder-white"
               placeholder="Enter your name"
             />
 
@@ -130,6 +158,7 @@ const Profile = () => {
               <input
                 type="file"
                 className="hidden"
+                accept="image/*"
                 onChange={(e) => {
                   const selected = e.target.files[0];
                   if (selected) {
