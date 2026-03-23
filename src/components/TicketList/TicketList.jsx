@@ -93,7 +93,7 @@ const TicketList = ({ tickets }) => {
                 onClick={() => navigate(`/tickets/${ticket._id}`)}
                 className="w-full cursor-pointer sm:w-auto px-4 py-2 text-sm sm:text-base rounded-lg  font-semibold text-white bg-[#ACD487] shadow hover:opacity-90 transition"
               >
-                Book Now
+                See Details
               </motion.button>
             </div>
           </div>
