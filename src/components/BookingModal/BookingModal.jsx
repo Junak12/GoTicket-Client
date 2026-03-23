@@ -14,7 +14,6 @@ const BookingModal = ({ ticket, closeModal, departurePassed }) => {
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [selectedPerks, setSelectedPerks] = useState([]);
 
-
   const getLayout = (type) => {
     switch (type.toLowerCase()) {
       case "plane":
@@ -75,8 +74,11 @@ const BookingModal = ({ ticket, closeModal, departurePassed }) => {
         closeModal();
       }
     } catch (err) {
-      console.error(err);
-      Swal.fire("Error", "Something went wrong", "error");
+      Swal.fire(
+        "Error",
+        err.response?.data?.message || "Something went wrong",
+        "error",
+      );
     }
   };
 
