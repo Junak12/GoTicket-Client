@@ -37,7 +37,7 @@ const Hero = () => {
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => navigate("booktickets")}
-            className=" cursor-pointer mt-8 bg-[#ACD487] text-gray-900 font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition"
+            className=" cursor-pointer mt-8 bg-[#ACD487] text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition"
           >
             Book Tickets
           </motion.button>
@@ -100,7 +100,7 @@ const Hero = () => {
           className="border p-3 rounded-lg outline-none focus:ring-2 focus:ring-[#ACD487]"
         />
 
-        <button className="bg-[#ACD487] font-semibold text-gray-900 rounded-lg hover:scale-105 transition">
+        <button className="bg-[#ACD487] font-semibold text-white rounded-lg hover:scale-105 transition">
           Search
         </button>
       </motion.div>
