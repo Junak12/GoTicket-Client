@@ -14,9 +14,9 @@ const AuthLayout = () => {
         <div
           onClick={() => navigate('/')}
         >
-          <h1 class="text-4xl font-extrabold flex items-center">
-            <span class=" text-cyan-400">Go</span>
-            <span class="text-pink-500">Ticket</span>
+          <h1 className="text-4xl font-extrabold flex items-center">
+            <span className=" text-cyan-400">Go</span>
+            <span className="text-pink-500">Ticket</span>
           </h1>
         </div>
         <div>

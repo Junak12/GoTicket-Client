@@ -11,6 +11,7 @@ import registerLogo from "../../assets/loginLogo.jpg";
 import { useAuth } from "../../hooks/Auth/useAuth";
 import useAxios from "../../hooks/Axios/useAxios";
 
+// Zod schema including photo validation
 const registerSchema = z
   .object({
     name: z.string().min(2, { message: "Name must be at least 2 characters" }),
@@ -21,19 +22,19 @@ const registerSchema = z
     confirmPassword: z
       .string()
       .min(6, { message: "Confirm password is required" }),
+    photo: z.any().refine((file) => file?.length === 1, {
+      message: "Profile photo is required",
+    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     path: ["confirmPassword"],
     message: "Passwords do not match",
   });
 
-
 const Register = () => {
   const { createUser, googleLogin } = useAuth();
   const navigate = useNavigate();
   const instance = useAxios();
-
-
 
   const {
     register: formRegister,
@@ -44,10 +45,16 @@ const Register = () => {
     mode: "onTouched",
   });
 
-
+  // Handle form submit
   const onSubmit = async (data) => {
     try {
-      const result = await createUser(data.name, data.email, data.password);
+      const photoFile = data.photo[0]; // Get File object
+      const result = await createUser(
+        data.name,
+        data.email,
+        data.password,
+        photoFile,
+      );
       const user = result.user;
 
       const userInfo = {
@@ -78,6 +85,7 @@ const Register = () => {
     }
   };
 
+  // Google login
   const handleGoogleRegister = async () => {
     try {
       const result = await googleLogin();
@@ -91,7 +99,7 @@ const Register = () => {
         createdAt: new Date(),
       };
 
-      await axios.post("/user", userInfo);
+      await instance.post("/user", userInfo);
 
       Swal.fire({
         icon: "success",
@@ -112,9 +120,9 @@ const Register = () => {
   };
 
   return (
-    <div className="mt-10 flex items-center justify-center bg-[#ACD487]/20 py-10 px-4 rounded-4xl">
-      <div className="max-w-5xl flex overflow-hidden rounded-xl shadow-xl bg-white dark:bg-[#ACD487] transition">
-
+    <div className="flex items-center justify-center py-10 px-4 bg-gray-50 dark:bg-slate-900 rounded-4xl mt-10">
+      <div className="max-w-5xl flex overflow-hidden rounded-xl shadow-xl bg-white dark:bg-slate-800 transition">
+        {/* Left Image */}
         <div className="w-1/2 hidden md:block">
           <img
             className="w-full h-full object-cover"
@@ -123,27 +131,26 @@ const Register = () => {
           />
         </div>
 
-
+        {/* Form */}
         <div className="w-full md:w-1/2 flex items-center justify-center p-8 md:p-10">
           <div className="w-full max-w-sm space-y-6">
-            <h1 className="text-3xl font-bold text-center text-gray-800 dark:text-black">
+            <h1 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100">
               Create Account
             </h1>
-
 
             <form
               noValidate
               onSubmit={handleSubmit(onSubmit)}
               className="space-y-4"
             >
-
+              {/* Name */}
               <div className="relative">
-                <LuUser className="absolute top-3.5 left-3 text-gray-400 dark:text-black/70" />
+                <LuUser className="absolute top-3.5 left-3 text-gray-400 dark:text-gray-300" />
                 <input
                   type="text"
                   placeholder="Name"
                   {...formRegister("name")}
-                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-black/30 bg-transparent"
+                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent text-gray-800 dark:text-gray-100"
                 />
                 {errors.name && (
                   <p className="text-red-500 text-sm mt-1">
@@ -152,14 +159,14 @@ const Register = () => {
                 )}
               </div>
 
-
+              {/* Email */}
               <div className="relative">
-                <LuMail className="absolute top-3.5 left-3 text-gray-400 dark:text-black/70" />
+                <LuMail className="absolute top-3.5 left-3 text-gray-400 dark:text-gray-300" />
                 <input
                   type="email"
                   placeholder="Email"
                   {...formRegister("email")}
-                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-black/30 bg-transparent"
+                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent text-gray-800 dark:text-gray-100"
                 />
                 {errors.email && (
                   <p className="text-red-500 text-sm mt-1">
@@ -168,14 +175,14 @@ const Register = () => {
                 )}
               </div>
 
-
+              {/* Password */}
               <div className="relative">
-                <LuLock className="absolute top-3.5 left-3 text-gray-400 dark:text-black/70" />
+                <LuLock className="absolute top-3.5 left-3 text-gray-400 dark:text-gray-300" />
                 <input
                   type="password"
                   placeholder="Password"
                   {...formRegister("password")}
-                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-black/30 bg-transparent"
+                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent text-gray-800 dark:text-gray-100"
                 />
                 {errors.password && (
                   <p className="text-red-500 text-sm mt-1">
@@ -184,13 +191,14 @@ const Register = () => {
                 )}
               </div>
 
+              {/* Confirm Password */}
               <div className="relative">
-                <LuLock className="absolute top-3.5 left-3 text-gray-400 dark:text-black/70" />
+                <LuLock className="absolute top-3.5 left-3 text-gray-400 dark:text-gray-300" />
                 <input
                   type="password"
                   placeholder="Confirm Password"
                   {...formRegister("confirmPassword")}
-                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-black/30 bg-transparent"
+                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent text-gray-800 dark:text-gray-100"
                 />
                 {errors.confirmPassword && (
                   <p className="text-red-500 text-sm mt-1">
@@ -199,40 +207,66 @@ const Register = () => {
                 )}
               </div>
 
+              {/* Profile Photo */}
+              <div className="relative">
+                <label
+                  htmlFor="photo"
+                  className="flex items-center gap-2 w-full cursor-pointer px-3 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  <LuUser className="text-gray-400 dark:text-gray-300" />
+                  <span>
+                    {formRegister("photo")[0]?.name || "Upload Profile Photo"}
+                  </span>
+                  <input
+                    id="photo"
+                    type="file"
+                    accept="image/*"
+                    {...formRegister("photo")}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  />
+                </label>
+                {errors.photo && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.photo.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Submit */}
               <button
                 type="submit"
-                className="w-full py-3 rounded-lg bg-[#ACD487] hover:bg-[#9BCB75] text-gray-900 font-semibold"
+                className="w-full py-3 rounded-lg bg-[#ACD487] hover:bg-[#9BCB75] text-gray-900 font-semibold transition"
               >
                 Register
               </button>
             </form>
 
-
+            {/* OR Divider */}
             <div className="flex items-center">
-              <div className="flex-1 h-px bg-gray-300 dark:bg-black/30"></div>
-              <span className="px-3 text-sm text-gray-500 dark:text-black">
+              <div className="flex-1 h-px bg-gray-300 dark:bg-gray-600"></div>
+              <span className="px-3 text-sm text-gray-500 dark:text-gray-300">
                 OR
               </span>
-              <div className="flex-1 h-px bg-gray-300 dark:bg-black/30"></div>
+              <div className="flex-1 h-px bg-gray-300 dark:bg-gray-600"></div>
             </div>
 
-
+            {/* Google Login */}
             <button
               onClick={handleGoogleRegister}
-              className="w-full flex items-center justify-center gap-3 py-3 rounded-lg border border-gray-300 dark:border-black/30 hover:bg-gray-100 dark:hover:bg-[#9BCB75]"
+              className="w-full flex items-center justify-center gap-3 py-3 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
             >
               <FcGoogle size={20} />
-              <span className="text-gray-800 dark:text-black font-medium">
+              <span className="text-gray-800 dark:text-gray-100 font-medium">
                 Continue with Google
               </span>
             </button>
 
-
-            <p className="text-center text-gray-600 dark:text-black text-sm">
+            {/* Login Link */}
+            <p className="text-center text-gray-600 dark:text-gray-300 text-sm">
               Already have an account?{" "}
               <Link
                 to="/login"
-                className="text-[#ACD487] dark:text-black font-semibold hover:underline"
+                className="text-[#ACD487] dark:text-[#9BCB75] font-semibold hover:underline"
               >
                 Login
               </Link>

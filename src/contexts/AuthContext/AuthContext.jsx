@@ -1,6 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
-
-
+import axios from "axios";
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -22,35 +21,57 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // signup
-  const createUser = async(name, email, password) => {
+
+  const createUser = async (name, email, password, photoFile) => {
+    if (!photoFile) throw new Error("Profile photo is required");
+
     setLoading(true);
+
     const result = await createUserWithEmailAndPassword(auth, email, password);
+
+    const formData = new FormData();
+    formData.append("image", photoFile);
+
+    const imgbbApiKey = import.meta.env.VITE_IMGBB_API;
+    const imgbbUrl = `https://api.imgbb.com/1/upload?key=${imgbbApiKey}`;
+
+    const response = await axios.post(imgbbUrl, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    if (!response.data.success) throw new Error("Image upload failed");
+
+    const photoURL = response.data.data.url;
+
     await updateProfile(result.user, {
       displayName: name,
+      photoURL,
     });
+
+    setLoading(false);
     return result;
   };
 
-  // login
   const signInUser = (email, password) => {
     setLoading(true);
     return signInWithEmailAndPassword(auth, email, password);
   };
 
-  // google login
+ 
   const googleLogin = () => {
     setLoading(true);
     return signInWithPopup(auth, googleProvider);
   };
 
-  // logout
+ 
   const logOut = () => {
     setLoading(true);
     return signOut(auth);
   };
 
-  // track user state
+  
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
