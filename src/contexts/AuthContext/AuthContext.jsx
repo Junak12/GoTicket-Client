@@ -11,6 +11,7 @@ import {
   updateProfile,
 } from "firebase/auth";
 import app from "../../Firrbase/firebase.init";
+import useAxios from "../../hooks/Axios/useAxios";
 
 export const AuthContext = createContext();
 
@@ -20,6 +21,7 @@ const googleProvider = new GoogleAuthProvider();
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const instance = useAxios();
 
 
   const createUser = async (name, email, password, photoFile) => {
@@ -71,6 +73,48 @@ const AuthProvider = ({ children }) => {
     return signOut(auth);
   };
 
+  const updateUserProfile = async(name, photoFile) => {
+    try {
+      setLoading(true);
+      let photoURL = user?.photoURL;
+      if (photoFile) {
+        const formData = new FormData();
+        formData.append("image", photoFile);
+        const imgbbApiKey = import.meta.env.VITE_IMGBB_API;
+        const imgbbUrl = `https://api.imgbb.com/1/upload?key=${imgbbApiKey}`;
+        const response = await axios.post(imgbbUrl, formData);
+        if (!response.data.success) {
+          throw new Error("Image upload failed");
+        }
+        photoURL = response.data.data.url;
+      }
+
+      await updateProfile(auth.currentUser, {
+        displayName: name,
+        photoURL,
+      });
+
+      setUser({
+        ...auth.currentUser,
+        displayName: name,
+        photoURL,
+      });
+
+      await instance.patch(`/update-user/${user.email}`, {
+        name,
+        photo : photoURL,
+      })
+      
+    } 
+    catch (error) {
+      throw error;
+    }
+    finally{
+      setLoading(false);
+    }
+
+  }
+
   
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -88,6 +132,7 @@ const AuthProvider = ({ children }) => {
     signInUser,
     googleLogin,
     logOut,
+    updateUserProfile,
   };
 
   return (

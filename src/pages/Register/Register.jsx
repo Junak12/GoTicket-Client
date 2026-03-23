@@ -48,7 +48,7 @@ const Register = () => {
   // Handle form submit
   const onSubmit = async (data) => {
     try {
-      const photoFile = data.photo[0]; // Get File object
+      const photoFile = data.photo[0]; 
       const result = await createUser(
         data.name,
         data.email,
