@@ -49,8 +49,8 @@ const Sidebar = () => {
       icon: <FaUser />,
     },
     {
-      name: "Manage Tickets",
-      to: "/dashboard/vendor/tickets",
+      name: "Add Tickets",
+      to: "/dashboard/vendor/add-ticket",
       icon: <FaTicketAlt />,
     },
     {
