@@ -5,9 +5,10 @@ import { LuMail, LuLock } from "react-icons/lu";
 import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate } from "react-router";
 import { z } from "zod";
+import Swal from "sweetalert2"; 
+
 import loginLogo from "../../assets/loginLogo.jpg";
 import { useAuth } from "../../hooks/Auth/useAuth";
-
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -33,26 +34,66 @@ const Login = () => {
     mode: "onTouched",
   });
 
-  const onSubmit = (data) => {
-    signInUser(data.email, data.password)
-      .then((result) => {
-        console.log(result.user);
-        navigate("/");
-      })
-      .catch((error) => {
-        console.log(error.message);
+
+  const onSubmit = async (data) => {
+    try {
+      Swal.fire({
+        title: "Logging in...",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
       });
+
+      const result = await signInUser(data.email, data.password);
+
+      Swal.fire({
+        icon: "success",
+        title: "Login Successful",
+        text: `Welcome back ${result.user?.email}`,
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      navigate("/");
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Login Failed",
+        text: error.message,
+      });
+    }
   };
 
-  const handleGoogleLogin = () => {
-    googleLogin()
-      .then((result) => {
-        console.log(result.user);
-        navigate("/");
-      })
-      .catch((error) => {
-        console.log(error.message);
+
+  const handleGoogleLogin = async () => {
+    try {
+      Swal.fire({
+        title: "Signing in with Google...",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
       });
+
+      const result = await googleLogin();
+
+      Swal.fire({
+        icon: "success",
+        title: "Welcome!",
+        text: `Hello ${result.user?.displayName || "User"}`,
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      navigate("/");
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Google Login Failed",
+        text: error.message,
+      });
+    }
   };
 
   return (
@@ -86,7 +127,7 @@ const Login = () => {
                   type="email"
                   placeholder="Email"
                   {...register("email")}
-                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-black/30 bg-transparent text-gray-900 dark:text-black placeholder-gray-400 dark:placeholder-black/60 focus:outline-none focus:ring-2 focus:ring-[#ACD487]"
+                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-black/30 bg-transparent text-gray-900 dark:text-black focus:outline-none focus:ring-2 focus:ring-[#ACD487]"
                 />
                 {errors.email && (
                   <p className="text-red-500 text-sm mt-1">
@@ -102,7 +143,7 @@ const Login = () => {
                   type="password"
                   placeholder="Password"
                   {...register("password")}
-                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-black/30 bg-transparent text-gray-900 dark:text-black placeholder-gray-400 dark:placeholder-black/60 focus:outline-none focus:ring-2 focus:ring-[#ACD487]"
+                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-black/30 bg-transparent text-gray-900 dark:text-black focus:outline-none focus:ring-2 focus:ring-[#ACD487]"
                 />
                 {errors.password && (
                   <p className="text-red-500 text-sm mt-1">
