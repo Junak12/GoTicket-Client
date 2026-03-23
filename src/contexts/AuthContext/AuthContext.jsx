@@ -23,37 +23,50 @@ const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const instance = useAxios();
 
-
   const createUser = async (name, email, password, photoFile) => {
-    if (!photoFile) throw new Error("Profile photo is required");
-
     setLoading(true);
 
-    const result = await createUserWithEmailAndPassword(auth, email, password);
+    try {
+      const result = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      );
 
-    const formData = new FormData();
-    formData.append("image", photoFile);
+      let photoURL = "";
 
-    const imgbbApiKey = import.meta.env.VITE_IMGBB_API;
-    const imgbbUrl = `https://api.imgbb.com/1/upload?key=${imgbbApiKey}`;
+      if (photoFile) {
+        const formData = new FormData();
+        formData.append("image", photoFile);
 
-    const response = await axios.post(imgbbUrl, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+        const imgbbApiKey = import.meta.env.VITE_IMGBB_API;
+        const imgbbUrl = `https://api.imgbb.com/1/upload?key=${imgbbApiKey}`;
 
-    if (!response.data.success) throw new Error("Image upload failed");
+        try {
+          const response = await axios.post(imgbbUrl, formData);
+          photoURL = response.data.data.url;
+        } catch (err) {
+          console.log("Image upload failed, continuing...");
+        }
+      }
 
-    const photoURL = response.data.data.url;
+      await updateProfile(result.user, {
+        displayName: name,
+        photoURL,
+      });
 
-    await updateProfile(result.user, {
-      displayName: name,
-      photoURL,
-    });
-
-    setLoading(false);
-    return result;
+      return {
+        user: {
+          ...result.user,
+          displayName: name,
+          photoURL,
+        },
+      };
+    } catch (error) {
+      throw error;
+    } finally {
+      setLoading(false);
+    }
   };
 
   const signInUser = (email, password) => {
@@ -61,19 +74,17 @@ const AuthProvider = ({ children }) => {
     return signInWithEmailAndPassword(auth, email, password);
   };
 
- 
   const googleLogin = () => {
     setLoading(true);
     return signInWithPopup(auth, googleProvider);
   };
 
- 
   const logOut = () => {
     setLoading(true);
     return signOut(auth);
   };
 
-  const updateUserProfile = async(name, photoFile) => {
+  const updateUserProfile = async (name, photoFile) => {
     try {
       setLoading(true);
       let photoURL = user?.photoURL;
@@ -102,20 +113,15 @@ const AuthProvider = ({ children }) => {
 
       await instance.patch(`/update-user/${user.email}`, {
         name,
-        photo : photoURL,
-      })
-      
-    } 
-    catch (error) {
+        photo: photoURL,
+      });
+    } catch (error) {
       throw error;
-    }
-    finally{
+    } finally {
       setLoading(false);
     }
+  };
 
-  }
-
-  
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);

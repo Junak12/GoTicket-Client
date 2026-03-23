@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LuUser, LuMail, LuLock } from "react-icons/lu";
@@ -22,9 +22,11 @@ const registerSchema = z
     confirmPassword: z
       .string()
       .min(6, { message: "Confirm password is required" }),
-    photo: z.any().refine((file) => file?.length === 1, {
-      message: "Profile photo is required",
-    }),
+    photo: z
+      .any()
+      .refine((file) => file?.length === 1, {
+        message: "Profile photo is required",
+      }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     path: ["confirmPassword"],
@@ -35,10 +37,12 @@ const Register = () => {
   const { createUser, googleLogin } = useAuth();
   const navigate = useNavigate();
   const instance = useAxios();
+  const [fileName, setFileName] = useState("");
 
   const {
     register: formRegister,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(registerSchema),
@@ -48,7 +52,7 @@ const Register = () => {
   // Handle form submit
   const onSubmit = async (data) => {
     try {
-      const photoFile = data.photo[0]; 
+      const photoFile = data.photo[0]; // RHF stores file as array
       const result = await createUser(
         data.name,
         data.email,
@@ -208,21 +212,21 @@ const Register = () => {
               </div>
 
               {/* Profile Photo */}
-              <div className="relative">
-                <label
-                  htmlFor="photo"
-                  className="flex items-center gap-2 w-full cursor-pointer px-3 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                >
+              <div>
+                <label className="flex items-center gap-2 w-full cursor-pointer px-3 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                   <LuUser className="text-gray-400 dark:text-gray-300" />
-                  <span>
-                    {formRegister("photo")[0]?.name || "Upload Profile Photo"}
-                  </span>
+                  <span>{fileName || "Upload Profile Photo"}</span>
                   <input
-                    id="photo"
                     type="file"
                     accept="image/*"
-                    {...formRegister("photo")}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        setFileName(file.name);
+                        setValue("photo", [file], { shouldValidate: true }); 
+                      }
+                    }}
                   />
                 </label>
                 {errors.photo && (
