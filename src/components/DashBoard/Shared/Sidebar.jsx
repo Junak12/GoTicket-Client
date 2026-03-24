@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from "react-router";
 import { useRole } from "../../../hooks/Role/useRole";
 import { LuSunMoon } from "react-icons/lu";
 import { FcAdvertising } from "react-icons/fc";
+import { MdOutlinePendingActions } from "react-icons/md";
 import {
   FaUser,
   FaTicketAlt,
@@ -13,6 +14,7 @@ import {
 } from "react-icons/fa";
 import useTheme from "../../../hooks/Theme/useTheme";
 import { motion, AnimatePresence } from "framer-motion";
+import { icon } from "leaflet";
 
 const Sidebar = () => {
   const role = useRole();
@@ -57,6 +59,11 @@ const Sidebar = () => {
       name: "My Added Tickets",
       to: "/dashboard/vendor/my-ticket",
       icon: <FaClipboardList />,
+    },
+    {
+      name: "Requested Bookings",
+      to: "/dashboard/vendor/requested-bookings",
+      icon: <MdOutlinePendingActions />,
     },
   ];
 
