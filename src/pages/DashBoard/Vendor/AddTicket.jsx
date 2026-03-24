@@ -162,7 +162,7 @@ const AddTicket = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="w-full max-w-3xl bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-6 sm:p-8 flex flex-col gap-6"
       >
-        <h2 className="text-3xl font-extrabold text-gray-800 dark:text-gray-100 text-center mb-2">
+        <h2 className="text-3xl font-extrabold text-cyan-500 text-center mb-2">
           Add Ticket
         </h2>
 

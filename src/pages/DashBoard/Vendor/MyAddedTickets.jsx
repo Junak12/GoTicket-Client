@@ -81,7 +81,7 @@ const MyAddedTickets = () => {
   return (
     <div className="pl-4 sm:pl-6 md:pl-70 pr-4 sm:pr-6 md:pr-12 py-8  min-h-screen">
       {/* Header */}
-      <h1 className="text-3xl md:text-4xl font-extrabold mb-8 text-center bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">
+      <h1 className="text-3xl md:text-4xl font-extrabold mb-8 text-center text-cyan-500  bg-clip-text">
         My Added Tickets
       </h1>
 

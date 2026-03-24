@@ -165,7 +165,7 @@ const UpdateTicket = () => {
       transition={{ duration: 0.5 }}
       className="max-w-4xl mx-auto p-6 md:p-8 bg-white dark:bg-gray-900 rounded-2xl shadow-lg space-y-6"
     >
-      <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-gray-100">
+      <h2 className="text-3xl font-bold text-center text-cyan-500">
         Update Ticket
       </h2>
 
@@ -342,11 +342,7 @@ const UpdateTicket = () => {
         )}
       </div>
 
-      <button
-        type="submit"
-        disabled={uploading}
-        className="w-full bg-blue-600 dark:bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 dark:hover:bg-blue-600 transition"
-      >
+      <button type="submit" disabled={uploading} className="w-full bg-[#ff6900] py-2 text-white rounded-2xl font-bold">
         Update Ticket
       </button>
     </motion.form>
