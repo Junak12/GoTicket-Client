@@ -33,19 +33,23 @@ const PaymentSuccess = () => {
 
       return res.data.booking;
     },
-    enabled: !!sessionId, 
+    enabled: !!sessionId,
   });
 
   if (isLoading)
     return (
       <p className="mt-20 text-center text-gray-500">Processing payment...</p>
     );
-
   if (isError)
     return (
       <p className="mt-20 text-center text-red-500">
-        {error?.message || "Something went wrong during verification"}
+        {error?.message || "Something went wrong"}
       </p>
+    );
+
+  if (!booking)
+    return (
+      <p className="mt-20 text-center text-gray-500">No booking data found</p>
     );
 
   return (
@@ -57,22 +61,24 @@ const PaymentSuccess = () => {
       <div className="space-y-4 text-gray-700 dark:text-gray-200">
         <div className="flex justify-between">
           <span className="font-semibold">Vendor:</span>
-          <span>{booking.vendorName}</span>
+          <span>{booking.vendorName || "Unknown"}</span>
         </div>
 
         <div className="flex justify-between">
           <span className="font-semibold">Seats:</span>
-          <span>{booking.seats.join(", ")}</span>
+          <span>
+            {booking.seats?.length ? booking.seats.join(", ") : "N/A"}
+          </span>
         </div>
 
         <div className="flex justify-between">
           <span className="font-semibold">Total Tickets:</span>
-          <span>{booking.totalTickets}</span>
+          <span>{booking.totalTickets || 0}</span>
         </div>
 
         <div className="flex justify-between">
           <span className="font-semibold">Amount Paid:</span>
-          <span>৳ {booking.totalPrice}</span>
+          <span>৳ {booking.totalPrice || 0}</span>
         </div>
       </div>
 

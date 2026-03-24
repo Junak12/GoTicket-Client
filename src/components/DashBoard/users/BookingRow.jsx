@@ -1,15 +1,28 @@
-// src/pages/Dashboard/BookingRow.jsx
-import React, { useState } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useEffect } from "react";
+import useAxios from "../../../hooks/Axios/useAxios";
+import Swal from "sweetalert2";
+import { useAuth } from "../../../hooks/Auth/useAuth";
 
 // Countdown Component
 const Countdown = ({ departureDateTime }) => {
   const [timeLeft, setTimeLeft] = useState("");
 
-  React.useEffect(() => {
+  useEffect(() => {
+    if (!departureDateTime) {
+      setTimeLeft("N/A");
+      return;
+    }
+
     const interval = setInterval(() => {
       const now = new Date();
-      const departure = new Date(departureDateTime + "Z"); // UTC
+      const departure = new Date(departureDateTime + "Z");
+
+      if (isNaN(departure.getTime())) {
+        setTimeLeft("Invalid date");
+        clearInterval(interval);
+        return;
+      }
+
       const diff = departure - now;
 
       if (diff <= 0) {
@@ -38,6 +51,7 @@ const Countdown = ({ departureDateTime }) => {
 
 const BookingRow = ({ booking }) => {
   const {
+    _id: bookingId,
     ticketTitle,
     ticketImage,
     from,
@@ -47,23 +61,63 @@ const BookingRow = ({ booking }) => {
     departureDateTime,
     status,
     selectedPerks,
+    ticketId,
   } = booking;
 
-  const [isExpired, setIsExpired] = useState(false);
+  const instance = useAxios();
+  const { user } = useAuth();
+  const [paying, setPaying] = useState(false);
 
-  const handlePayment = () => {
-    if (status !== "accepted" || isExpired) return;
-    console.log("Proceed to payment:", booking);
-    // TODO: Stripe integration
+  const handlePayment = async () => {
+    if (status !== "approved") return;
+    if (!user?.email) return Swal.fire("Error", "User not logged in", "error");
+
+    setPaying(true);
+
+    try {
+      // Send bookingId to backend
+      const res = await instance.post("/create-checkout-session", {
+        totalPrice,
+        email: user.email,
+        vendorName: ticketTitle,
+        ticketId,
+        seats,
+        bookingId, 
+      });
+
+      if (res.data?.url) {
+        Swal.fire({
+          title: "Redirecting...",
+          text: "Taking you to secure payment gateway",
+          icon: "info",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+
+        // Redirect to Stripe checkout
+        setTimeout(() => {
+          window.location.href = res.data.url;
+        }, 1500);
+      } else {
+        throw new Error("No payment URL received");
+      }
+    } catch (error) {
+      Swal.fire({
+        title: "Payment Failed",
+        text: error?.response?.data?.message || "Something went wrong",
+        icon: "error",
+      });
+    }
+
+    setPaying(false);
   };
 
+  const isPaid = status === "paid";
+  const canPay = status === "approved" && !isPaid;
+
   return (
-    <motion.tr
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ scale: 1.01 }}
-      className="hover:bg-gray-50 dark:hover:bg-slate-700"
-    >
+    <tr className="hover:bg-gray-50 dark:hover:bg-slate-700 transition">
+      {/* Ticket */}
       <td className="px-4 py-2 flex items-center gap-2">
         <img
           src={ticketImage}
@@ -73,13 +127,17 @@ const BookingRow = ({ booking }) => {
         <span>{ticketTitle}</span>
       </td>
 
+      {/* Route */}
       <td className="px-4 py-2">
         {from} → {to}
       </td>
-      <td className="px-4 py-2">{seats.join(", ")}</td>
 
+      {/* Seats */}
+      <td className="px-4 py-2">{seats?.join(", ")}</td>
+
+      {/* Perks */}
       <td className="px-4 py-2">
-        {selectedPerks && selectedPerks.length > 0 ? (
+        {selectedPerks?.length > 0 ? (
           <div className="flex flex-wrap gap-1">
             {selectedPerks.map((perk, i) => (
               <span
@@ -95,9 +153,10 @@ const BookingRow = ({ booking }) => {
         )}
       </td>
 
+      {/* Price */}
       <td className="px-4 py-2">৳ {totalPrice}</td>
 
-      {/* Departure countdown */}
+      {/* Countdown */}
       <td className="px-4 py-2">
         <Countdown departureDateTime={departureDateTime} />
       </td>
@@ -105,10 +164,10 @@ const BookingRow = ({ booking }) => {
       {/* Status */}
       <td className="px-4 py-2">
         <span
-          className={`px-2 py-1 rounded text-xs ${
+          className={`px-2 py-1 rounded text-xs font-semibold ${
             status === "pending"
               ? "bg-yellow-200 text-yellow-800"
-              : status === "accepted"
+              : status === "approved"
                 ? "bg-blue-200 text-blue-800"
                 : status === "paid"
                   ? "bg-green-200 text-green-800"
@@ -119,20 +178,27 @@ const BookingRow = ({ booking }) => {
         </span>
       </td>
 
+      {/* Payment Button / Badge */}
       <td className="px-4 py-2">
-        <button
-          onClick={handlePayment}
-          disabled={status !== "accepted" || isExpired}
-          className={`px-3 py-1 rounded text-white ${
-            status === "accepted" && !isExpired
-              ? "bg-purple-500 hover:bg-purple-600"
-              : "bg-gray-400 cursor-not-allowed"
-          }`}
-        >
-          Pay Now
-        </button>
+        {isPaid ? (
+          <span className="px-3 py-1 bg-green-500 text-white rounded-lg text-xs font-semibold">
+            ✅ Paid
+          </span>
+        ) : (
+          <button
+            onClick={handlePayment}
+            disabled={!canPay || paying}
+            className={`px-3 py-1 rounded text-white transition ${
+              canPay
+                ? "bg-[#00c950] hover:scale-105"
+                : "bg-gray-400 cursor-not-allowed"
+            }`}
+          >
+            {paying ? "Processing..." : "Pay Now"}
+          </button>
+        )}
       </td>
-    </motion.tr>
+    </tr>
   );
 };
 

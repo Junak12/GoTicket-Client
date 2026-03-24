@@ -1,20 +1,22 @@
 // src/pages/Dashboard/MyBookings.jsx
-import React from "react";
+import React, { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import BookingTable from "../../../components/DashBoard/users/BookingTable";
 import useAxios from "../../../hooks/Axios/useAxios";
 import { useAuth } from "../../../hooks/Auth/useAuth";
-
+import { useLocation } from "react-router";
 
 const MyBookings = () => {
   const instance = useAxios();
   const { user } = useAuth();
+  const location = useLocation();
 
   // Fetch bookings using React Query
   const {
     data: bookings = [],
     isLoading,
     isError,
+    refetch,
   } = useQuery({
     queryKey: ["userBookings", user?.email],
     queryFn: async () => {
@@ -23,6 +25,13 @@ const MyBookings = () => {
     },
     enabled: !!user?.email,
   });
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("session_id")) {
+      refetch();
+    }
+  }, [location.search, refetch]);
 
   if (isLoading)
     return (
