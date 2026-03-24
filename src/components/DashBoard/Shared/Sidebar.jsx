@@ -54,8 +54,8 @@ const Sidebar = () => {
       icon: <FaTicketAlt />,
     },
     {
-      name: "Booking Requests",
-      to: "/dashboard/vendor/bookings",
+      name: "My Added Tickets",
+      to: "/dashboard/vendor/my-ticket",
       icon: <FaClipboardList />,
     },
   ];
