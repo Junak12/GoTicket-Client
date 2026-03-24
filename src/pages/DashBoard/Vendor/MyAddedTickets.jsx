@@ -54,7 +54,9 @@ const MyAddedTickets = () => {
     if (!result.isConfirmed) return;
 
     try {
-      const res = await instance.delete(`/tickets/${id}`);
+      const res = await instance.delete(
+        `/vendor/my-tickets/delete-ticket/${id}`,
+      );
       if (res.data.success) {
         Swal.fire("Deleted!", "Ticket removed successfully", "success");
         queryClient.invalidateQueries(["vendorTickets"]);
@@ -77,7 +79,7 @@ const MyAddedTickets = () => {
   }
 
   return (
-    <div className="pl-4 sm:pl-6 md:pl-70 pr-4 sm:pr-6 md:pr-12 py-8 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 min-h-screen">
+    <div className="pl-4 sm:pl-6 md:pl-70 pr-4 sm:pr-6 md:pr-12 py-8  min-h-screen">
       {/* Header */}
       <h1 className="text-3xl md:text-4xl font-extrabold mb-8 text-center bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">
         My Added Tickets
@@ -126,7 +128,7 @@ const MyAddedTickets = () => {
                     {ticket.from} → {ticket.to}
                   </p>
 
-                  <p className="text-sm mb-3">
+                  <p className="text-sm mb-3 text-black dark:text-white">
                     Price:{" "}
                     <span className="font-semibold text-blue-600">
                       ৳{ticket.price}
@@ -150,7 +152,11 @@ const MyAddedTickets = () => {
                   {/* Buttons */}
                   <div className="mt-auto flex gap-3">
                     <button
-                      onClick={() => navigate(`/update-ticket/${ticket._id}`)}
+                      onClick={() =>
+                        navigate(
+                          `/dashboard/vendor/my-ticket/update-ticket/${ticket._id}`,
+                        )
+                      }
                       disabled={isRejected}
                       className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all duration-300
                       ${
