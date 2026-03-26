@@ -13,6 +13,7 @@ import {
 import app from "../../Firrbase/firebase.init";
 import useAxios from "../../hooks/Axios/useAxios";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext();
 
 const auth = getAuth(app);
@@ -45,8 +46,9 @@ const AuthProvider = ({ children }) => {
         try {
           const response = await axios.post(imgbbUrl, formData);
           photoURL = response.data.data.url;
-        } catch (err) {
-          console.log("Image upload failed, continuing...");
+        } catch (error) {
+          console.log(error);
+          
         }
       }
 
@@ -63,7 +65,8 @@ const AuthProvider = ({ children }) => {
         },
       };
     } catch (error) {
-      throw error;
+      console.log(error);
+      
     } finally {
       setLoading(false);
     }
@@ -116,7 +119,7 @@ const AuthProvider = ({ children }) => {
         photo: photoURL,
       });
     } catch (error) {
-      throw error;
+      console.log(error);
     } finally {
       setLoading(false);
     }

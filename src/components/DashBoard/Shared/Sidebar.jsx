@@ -4,6 +4,7 @@ import { useRole } from "../../../hooks/Role/useRole";
 import { LuSunMoon } from "react-icons/lu";
 import { FcAdvertising } from "react-icons/fc";
 import { MdOutlinePendingActions } from "react-icons/md";
+import { FaHandHoldingDollar } from "react-icons/fa6";
 import {
   FaUser,
   FaTicketAlt,
@@ -64,6 +65,11 @@ const Sidebar = () => {
       name: "Requested Bookings",
       to: "/dashboard/vendor/requested-bookings",
       icon: <MdOutlinePendingActions />,
+    },
+    {
+      name: "Total Revenue",
+      to: "/dashboard/vendor/revenue",
+      icon: <FaHandHoldingDollar />,
     },
   ];
 

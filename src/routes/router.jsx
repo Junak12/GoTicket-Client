@@ -26,6 +26,7 @@ import AddTicket from "../pages/DashBoard/Vendor/AddTicket";
 import MyAddedTickets from "../pages/DashBoard/Vendor/MyAddedTickets";
 import UpdateTicket from "../pages/DashBoard/Vendor/UpdateTicket";
 import RequestedBookings from "../pages/DashBoard/Vendor/RequestedBookings";
+import RevenueOverview from "../pages/DashBoard/Vendor/RevenueOverview";
 
 export const router = createBrowserRouter([
   {
@@ -194,6 +195,14 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute allowedRoles={["vendor"]}>
             <RequestedBookings />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/dashboard/vendor/revenue",
+        element: (
+          <PrivateRoute allowedRoles={["vendor"]}>
+            <RevenueOverview />
           </PrivateRoute>
         ),
       },
