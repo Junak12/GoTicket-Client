@@ -56,7 +56,7 @@ const MyBookings = () => {
 
   return (
     <div className="p-4 md:pl-60">
-      <h1 className="text-2xl md:text-3xl font-bold mb-6">My Booked Tickets</h1>
+      <h1 className="text-2xl md:text-3xl font-bold mb-6 text-center text-cyan-500">My Booked Tickets</h1>
       <BookingTable bookings={bookings} />
     </div>
   );

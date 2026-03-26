@@ -124,16 +124,18 @@ const BookingRow = ({ booking }) => {
           alt={ticketTitle}
           className="w-12 h-12 object-cover rounded"
         />
-        <span>{ticketTitle}</span>
+        <span className="text-black dark:text-white">{ticketTitle}</span>
       </td>
 
       {/* Route */}
-      <td className="px-4 py-2">
+      <td className="px-4 py-2 text-black dark:text-white">
         {from} → {to}
       </td>
 
       {/* Seats */}
-      <td className="px-4 py-2">{seats?.join(", ")}</td>
+      <td className="px-4 py-2 text-black dark:text-white">
+        {seats?.join(", ")}
+      </td>
 
       {/* Perks */}
       <td className="px-4 py-2">
@@ -149,12 +151,14 @@ const BookingRow = ({ booking }) => {
             ))}
           </div>
         ) : (
-          <span className="text-xs text-gray-400">No perks</span>
+          <span className="text-xs text-gray-400 dark:text-white">
+            No perks
+          </span>
         )}
       </td>
 
       {/* Price */}
-      <td className="px-4 py-2">৳ {totalPrice}</td>
+      <td className="px-4 py-2 text-black dark:text-white">৳ {totalPrice}</td>
 
       {/* Countdown */}
       <td className="px-4 py-2">

@@ -46,7 +46,7 @@ const Transactions = () => {
 
   return (
     <div className="p-4 md:p-6 lg:pl-60 transition-all duration-300">
-      <h2 className="text-2xl md:text-3xl font-bold mb-6 text-gray-800 dark:text-gray-100">
+      <h2 className="text-2xl md:text-3xl text-center font-bold mb-6 text-cyan-500">
         Transaction History
       </h2>
       <div className="hidden lg:block overflow-x-auto rounded-xl shadow">
