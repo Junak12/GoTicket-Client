@@ -3,12 +3,14 @@ import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import useAxios from "../../../hooks/Axios/useAxios";
 import Swal from "sweetalert2";
+import useAxiosSecure from "../../../hooks/AxiosSecure/useAxiosSecure";
 
 const VendorRequests = () => {
   const instance = useAxios();
+  const axiosSecure = useAxiosSecure();
 
   const fetchVendors = async () => {
-    const res = await instance.get("/admin/vendor-application");
+    const res = await axiosSecure.get("/admin/vendor-application");
     return res.data;
   };
 

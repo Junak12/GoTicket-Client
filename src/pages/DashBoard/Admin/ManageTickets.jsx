@@ -3,12 +3,14 @@ import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
 import useAxios from "../../../hooks/Axios/useAxios";
+import useAxiosSecure from "../../../hooks/AxiosSecure/useAxiosSecure";
 
 const ManageTickets = () => {
   const instance = useAxios();
+  const axiosSecure = useAxiosSecure();
 
   const fetchTickets = async () => {
-    const res = await instance.get("/admin/get-tickets");
+    const res = await axiosSecure.get("/admin/get-tickets");
     return res.data;
   };
 
@@ -38,7 +40,7 @@ const ManageTickets = () => {
           ? `/admin/ticket/${id}/approved`
           : `/admin/ticket/${id}/rejected`;
 
-      const res = await instance.patch(url);
+      const res = await axiosSecure.patch(url);
 
       if (res.data.success) {
         Swal.fire({

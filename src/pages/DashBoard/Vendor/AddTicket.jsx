@@ -7,6 +7,7 @@ import { useAuth } from "../../../hooks/Auth/useAuth";
 import axios from "axios";
 import useAxios from "../../../hooks/Axios/useAxios";
 import Swal from "sweetalert2";
+import useAxiosSecure from "../../../hooks/AxiosSecure/useAxiosSecure";
 
 const ticketSchema = z.object({
   title: z.string().min(3),
@@ -52,6 +53,7 @@ const AddTicket = () => {
   const instance = useAxios();
   const [imageURL, setImageURL] = useState("");
   const [uploading, setUploading] = useState(false);
+  const axiosSecure = useAxiosSecure();
 
   const {
     register,
@@ -132,7 +134,7 @@ const AddTicket = () => {
     };
 
     try {
-      await instance.post("/tickets", ticketData);
+      await axiosSecure.post("/tickets", ticketData);
       Swal.fire({
         icon: "success",
         title: "Ticket Added!",

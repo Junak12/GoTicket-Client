@@ -4,10 +4,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import useAxios from "../../../hooks/Axios/useAxios";
 import Swal from "sweetalert2";
 import { useAuth } from "../../../hooks/Auth/useAuth";
+import useAxiosSecure from "../../../hooks/AxiosSecure/useAxiosSecure";
 
 const RequestedBookings = () => {
   const instance = useAxios();
   const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
 
   const {
     data: bookings = [],
@@ -17,7 +19,7 @@ const RequestedBookings = () => {
     queryKey: ["vendorBookings", user?.email],
     queryFn: async () => {
       if (!user?.email) return [];
-      const res = await instance.get(`/vendor/req-bookings/${user.email}`);
+      const res = await axiosSecure.get(`/vendor/req-bookings/${user.email}`);
       return res.data.filter((b) => b.status === "pending");
     },
     enabled: !!user?.email,
@@ -39,7 +41,7 @@ const RequestedBookings = () => {
 
       if (!result.isConfirmed) return;
 
-      await instance.patch(`/vendor/req-bookings/${action}/${id}`);
+      await axiosSecure.patch(`/vendor/req-bookings/${action}/${id}`);
 
       await Swal.fire({
         icon: "success",

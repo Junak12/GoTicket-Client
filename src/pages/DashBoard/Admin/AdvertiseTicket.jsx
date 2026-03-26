@@ -3,12 +3,14 @@ import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
 import useAxios from "../../../hooks/Axios/useAxios";
+import useAxiosSecure from "../../../hooks/AxiosSecure/useAxiosSecure";
 
 const AdvertiseTicket = () => {
   const instance = useAxios();
+  const axiosSecure = useAxiosSecure();
 
   const fetchTickets = async () => {
-    const res = await instance.get("/admin/all-tickets");
+    const res = await axiosSecure.get("/admin/all-tickets");
     return res.data;
   };
 
@@ -32,7 +34,7 @@ const AdvertiseTicket = () => {
     if (!confirm.isConfirmed) return;
 
     try {
-      const res = await instance.patch(`/admin/tickets/advertise/${id}`);
+      const res = await axiosSecure.patch(`/admin/tickets/advertise/${id}`);
       Swal.fire("Success!", res.data.message, "success");
       refetch();
     } catch (err) {

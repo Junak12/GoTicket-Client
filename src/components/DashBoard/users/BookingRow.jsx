@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import useAxios from "../../../hooks/Axios/useAxios";
 import Swal from "sweetalert2";
 import { useAuth } from "../../../hooks/Auth/useAuth";
+import useAxiosSecure from "../../../hooks/AxiosSecure/useAxiosSecure";
 
 // Countdown Component
 const Countdown = ({ departureDateTime }) => {
@@ -67,6 +68,7 @@ const BookingRow = ({ booking }) => {
   const instance = useAxios();
   const { user } = useAuth();
   const [paying, setPaying] = useState(false);
+  const axiosSecure = useAxiosSecure();
 
   const handlePayment = async () => {
     if (status !== "approved") return;
@@ -76,13 +78,13 @@ const BookingRow = ({ booking }) => {
 
     try {
       // Send bookingId to backend
-      const res = await instance.post("/create-checkout-session", {
+      const res = await axiosSecure.post("/create-checkout-session", {
         totalPrice,
         email: user.email,
         vendorName: ticketTitle,
         ticketId,
         seats,
-        bookingId, 
+        bookingId,
       });
 
       if (res.data?.url) {

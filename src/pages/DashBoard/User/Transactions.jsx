@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import useAxios from "../../../hooks/Axios/useAxios";
 import { useAuth } from "../../../hooks/Auth/useAuth";
+import useAxiosSecure from "../../../hooks/AxiosSecure/useAxiosSecure";
 
 const containerVariants = {
   hidden: {},
@@ -26,12 +27,13 @@ const cardVariants = {
 const Transactions = () => {
   const instance = useAxios();
   const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
 
   const { data: transactions = [], isLoading } = useQuery({
     queryKey: ["transactions", user?.email],
     enabled: !!user?.email,
     queryFn: async () => {
-      const res = await instance.get(`/user/transactions/${user.email}`);
+      const res = await axiosSecure.get(`/user/transactions/${user.email}`);
       return res.data;
     },
   });

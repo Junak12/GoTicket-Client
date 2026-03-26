@@ -3,10 +3,12 @@ import { useLocation } from "react-router";
 import useAxios from "../../hooks/Axios/useAxios";
 import { useQuery } from "@tanstack/react-query";
 import Swal from "sweetalert2";
+import useAxiosSecure from "../../hooks/AxiosSecure/useAxiosSecure";
 
 const PaymentSuccess = () => {
   const location = useLocation();
   const instance = useAxios();
+  const axiosSecure = useAxiosSecure();
 
   const sessionId = new URLSearchParams(location.search).get("session_id");
 
@@ -20,7 +22,7 @@ const PaymentSuccess = () => {
     queryFn: async () => {
       if (!sessionId) throw new Error("No session ID found");
 
-      const res = await instance.post("/verify-payment", { sessionId });
+      const res = await axiosSecure.post("/verify-payment", { sessionId });
       if (!res.data.success)
         throw new Error(res.data.message || "Payment failed");
 

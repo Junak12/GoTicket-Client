@@ -15,14 +15,16 @@ import {
   CartesianGrid,
   Cell,
 } from "recharts";
+import useAxiosSecure from "../../../hooks/AxiosSecure/useAxiosSecure";
 
 const RevenueOverview = () => {
   const instance = useAxios();
+  const axiosSecure = useAxiosSecure();
 
   const { data = {}, isLoading } = useQuery({
     queryKey: ["revenue-overview"],
     queryFn: async () => {
-      const res = await instance.get("/vendor/revenue-overview");
+      const res = await axiosSecure.get("/vendor/revenue-overview");
       return res.data;
     },
   });

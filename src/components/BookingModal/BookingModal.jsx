@@ -4,12 +4,14 @@ import useAxios from "../../hooks/Axios/useAxios";
 import { useAuth } from "../../hooks/Auth/useAuth";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
+import useAxiosSecure from "../../hooks/AxiosSecure/useAxiosSecure"
 
 const BookingModal = ({ ticket, closeModal, departurePassed }) => {
   const instance = useAxios();
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const bookedSeats = ticket.bookedSeats || [];
+  const axiosSecure = useAxiosSecure();
 
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [selectedPerks, setSelectedPerks] = useState([]);
@@ -59,7 +61,7 @@ const BookingModal = ({ ticket, closeModal, departurePassed }) => {
     }
 
     try {
-      const res = await instance.post("/book-ticket", {
+      const res = await axiosSecure.post("/book-ticket", {
         ticketId: ticket._id,
         email: user.email,
         seats: selectedSeats,

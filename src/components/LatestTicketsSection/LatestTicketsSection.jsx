@@ -21,7 +21,7 @@ const LatestTicketsSection = () => {
   } = useQuery({
     queryKey: ["latestTickets"],
     queryFn: fetchLatestTickets,
-    refetchOnWindowFocus: true, // 🔹 automatically refetch when window gains focus
+    refetchOnWindowFocus: true, 
   });
 
   if (isLoading)

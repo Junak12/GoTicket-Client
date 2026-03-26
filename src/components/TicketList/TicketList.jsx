@@ -5,7 +5,6 @@ import { LuMapPin, LuUsers, LuTicket } from "react-icons/lu";
 const TicketList = ({ tickets }) => {
   const navigate = useNavigate();
 
-  // 🔥 Perk Icon Logic
   const getPerkIcon = (name) => {
     const key = name.toLowerCase();
     if (key.includes("wifi")) return "📶";

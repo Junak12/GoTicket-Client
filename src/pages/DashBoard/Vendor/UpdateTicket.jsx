@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import useAxios from "../../../hooks/Axios/useAxios";
 import { motion } from "framer-motion";
+import useAxiosSecure from "../../../hooks/AxiosSecure/useAxiosSecure";
 
 const PERKS_LIST = [
   "AC",
@@ -54,6 +55,7 @@ const UpdateTicket = () => {
   const [imageURL, setImageURL] = useState("");
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(true);
+  const axiosSecure = useAxiosSecure();
 
   const {
     register,
@@ -74,7 +76,7 @@ const UpdateTicket = () => {
   useEffect(() => {
     const fetchTicket = async () => {
       try {
-        const res = await instance.get(`/tickets/${id}`);
+        const res = await axiosSecure.get(`/tickets/${id}`);
         const data = res.data;
 
         setValue("title", data.title);
@@ -135,7 +137,7 @@ const UpdateTicket = () => {
       .filter((p) => p.enabled)
       .map((p) => ({ name: p.name, price: Number(p.price) }));
     try {
-      await instance.patch(`/vendor/my-tickets/update-ticket/${id}`, {
+      await axiosSecure.patch(`/vendor/my-tickets/update-ticket/${id}`, {
         ...data,
         image: imageURL,
         perks: filteredPerks,

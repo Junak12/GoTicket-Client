@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router";
 import { useAuth } from "../../../hooks/Auth/useAuth";
 import useAxios from "../../../hooks/Axios/useAxios";
+import useAxiosSecure from "../../../hooks/AxiosSecure/useAxiosSecure";
 
 const containerVariants = {
   hidden: {},
@@ -30,12 +31,13 @@ const MyAddedTickets = () => {
   const instance = useAxios();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const axiosSecure = useAxiosSecure();
 
   const { data: tickets = [], isLoading } = useQuery({
     queryKey: ["vendorTickets", user?.email],
     enabled: !!user?.email,
     queryFn: async () => {
-      const res = await instance.get(`/vendor/get-ticket/${user.email}`);
+      const res = await axiosSecure.get(`/vendor/get-ticket/${user.email}`);
       return res.data;
     },
   });
@@ -54,7 +56,7 @@ const MyAddedTickets = () => {
     if (!result.isConfirmed) return;
 
     try {
-      const res = await instance.delete(
+      const res = await axiosSecure.delete(
         `/vendor/my-tickets/delete-ticket/${id}`,
       );
       if (res.data.success) {

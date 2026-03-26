@@ -4,11 +4,13 @@ import { useAuth } from "../../../hooks/Auth/useAuth";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
+import useAxiosSecure from "../../../hooks/AxiosSecure/useAxiosSecure";
 
 const Profile = () => {
   const instance = useAxios();
   const { user, updateUserProfile } = useAuth();
   const queryClient = useQueryClient();
+  const axiosSecure = useAxiosSecure();
 
   const [openModal, setOpenModal] = useState(false);
   const [preview, setPreview] = useState("");

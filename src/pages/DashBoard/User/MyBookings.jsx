@@ -5,13 +5,13 @@ import BookingTable from "../../../components/DashBoard/users/BookingTable";
 import useAxios from "../../../hooks/Axios/useAxios";
 import { useAuth } from "../../../hooks/Auth/useAuth";
 import { useLocation } from "react-router";
+import useAxiosSecure from "../../../hooks/AxiosSecure/useAxiosSecure";
 
 const MyBookings = () => {
   const instance = useAxios();
   const { user } = useAuth();
   const location = useLocation();
-
-  // Fetch bookings using React Query
+  const axiosSecure = useAxiosSecure();
   const {
     data: bookings = [],
     isLoading,
@@ -20,7 +20,7 @@ const MyBookings = () => {
   } = useQuery({
     queryKey: ["userBookings", user?.email],
     queryFn: async () => {
-      const res = await instance.get(`/userbookticket/${user?.email}`);
+      const res = await axiosSecure.get(`/userbookticket/${user?.email}`);
       return res.data;
     },
     enabled: !!user?.email,

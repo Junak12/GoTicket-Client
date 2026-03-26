@@ -4,11 +4,13 @@ import { motion } from "framer-motion";
 import Swal from "sweetalert2";
 import useAxios from "../../../hooks/Axios/useAxios";
 import { useAuth } from "../../../hooks/Auth/useAuth";
+import useAxiosSecure from "../../../hooks/AxiosSecure/useAxiosSecure";
 
 const UserManagement = () => {
   const instance = useAxios();
   const { user } = useAuth();
   const [actionDisabled, setActionDisabled] = React.useState(false);
+  const axiosSecure = useAxiosSecure();
 
   const tableVariants = {
     hidden: {},
@@ -21,7 +23,7 @@ const UserManagement = () => {
   };
 
   const fetchUsers = async () => {
-    const res = await instance.get(`/admin/users?email=${user?.email}`);
+    const res = await axiosSecure.get(`/admin/users?email=${user?.email}`);
     return res.data;
   };
 
@@ -55,7 +57,7 @@ const UserManagement = () => {
     }
 
     try {
-      const res = await instance.patch(url);
+      const res = await axiosSecure.patch(url);
       if (res.data.success) {
         Swal.fire("Updated!", "", "success");
         refetch();
